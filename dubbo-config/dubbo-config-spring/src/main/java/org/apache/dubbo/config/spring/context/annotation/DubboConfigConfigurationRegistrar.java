@@ -17,14 +17,12 @@
 package org.apache.dubbo.config.spring.context.annotation;
 
 import org.apache.dubbo.config.AbstractConfig;
-
+import org.apache.dubbo.config.spring.util.AnnotatedBeanDefinitionRegistryUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
-
-import static org.apache.dubbo.config.spring.util.AnnotatedBeanDefinitionRegistryUtils.registerBeans;
 
 /**
  * Dubbo {@link AbstractConfig Config} {@link ImportBeanDefinitionRegistrar register}, which order can be configured
@@ -38,16 +36,16 @@ public class DubboConfigConfigurationRegistrar implements ImportBeanDefinitionRe
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-
-        AnnotationAttributes attributes = AnnotationAttributes.fromMap(
-                importingClassMetadata.getAnnotationAttributes(EnableDubboConfig.class.getName()));
-
+        // 获得 @EnableDubboConfig 注解的属性
+        AnnotationAttributes attributes = AnnotationAttributes.fromMap(importingClassMetadata.getAnnotationAttributes(EnableDubboConfig.class.getName()));
+        // 获得 multiple 属性
         boolean multiple = attributes.getBoolean("multiple");
-
+        // 如果为 true ，则注册 DubboConfigConfiguration.Multiple Bean 对象
         if (multiple) {
-            registerBeans(registry, DubboConfigConfiguration.Multiple.class);
+            AnnotatedBeanDefinitionRegistryUtils.registerBeans(registry, DubboConfigConfiguration.Multiple.class);
+        // 如果为 false ，则注册 DubboConfigConfiguration.Single Bean 对象
         } else {
-            registerBeans(registry, DubboConfigConfiguration.Single.class);
+            AnnotatedBeanDefinitionRegistryUtils.registerBeans(registry, DubboConfigConfiguration.Single.class);
         }
     }
 

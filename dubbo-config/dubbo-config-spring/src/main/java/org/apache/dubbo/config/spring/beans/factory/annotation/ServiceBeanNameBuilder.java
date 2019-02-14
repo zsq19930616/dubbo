@@ -98,6 +98,7 @@ class ServiceBeanNameBuilder {
         return this;
     }
 
+    // ServiceBean:${interfaceClassName}:${version}:${group}
     public String build() {
         StringBuilder beanNameBuilder = new StringBuilder("ServiceBean");
         // Required
@@ -110,4 +111,5 @@ class ServiceBeanNameBuilder {
         // Resolve placeholders
         return environment.resolvePlaceholders(rawBeanName);
     }
+
 }

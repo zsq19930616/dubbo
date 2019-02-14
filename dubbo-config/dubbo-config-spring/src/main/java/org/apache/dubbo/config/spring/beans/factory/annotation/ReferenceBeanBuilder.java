@@ -49,16 +49,13 @@ class ReferenceBeanBuilder extends AbstractAnnotationConfigBeanBuilder<Reference
         super(annotation, classLoader, applicationContext);
     }
 
+    @SuppressWarnings("Duplicates")
     private void configureInterface(Reference reference, ReferenceBean referenceBean) {
-
+        // 首先，从 @Reference 获得 interfaceName 属性，从而获得 interfaceClass 类
         Class<?> interfaceClass = reference.interfaceClass();
-
         if (void.class.equals(interfaceClass)) {
-
             interfaceClass = null;
-
             String interfaceClassName = reference.interfaceName();
-
             if (StringUtils.hasText(interfaceClassName)) {
                 if (ClassUtils.isPresent(interfaceClassName, classLoader)) {
                     interfaceClass = ClassUtils.resolveClassName(interfaceClassName, classLoader);
@@ -67,38 +64,39 @@ class ReferenceBeanBuilder extends AbstractAnnotationConfigBeanBuilder<Reference
 
         }
 
+        // 如果获得不到，则使用 interfaceClass 即可
         if (interfaceClass == null) {
             interfaceClass = this.interfaceClass;
         }
 
-        Assert.isTrue(interfaceClass.isInterface(),
-                "The class of field or method that was annotated @Reference is not an interface!");
-
+        Assert.isTrue(interfaceClass.isInterface(), "The class of field or method that was annotated @Reference is not an interface!");
         referenceBean.setInterface(interfaceClass);
-
     }
 
 
     private void configureConsumerConfig(Reference reference, ReferenceBean<?> referenceBean) {
-
+        // 获得 ConsumerConfig 对象
         String consumerBeanName = reference.consumer();
-
         ConsumerConfig consumerConfig = getOptionalBean(applicationContext, consumerBeanName, ConsumerConfig.class);
-
+        // 设置到 referenceBean 中
         referenceBean.setConsumer(consumerConfig);
-
     }
 
     @Override
     protected ReferenceBean doBuild() {
-        return new ReferenceBean<Object>();
+        // 创建 ReferenceBean 对象
+        return new ReferenceBean<>();
     }
 
+    @SuppressWarnings("Duplicates")
     @Override
     protected void preConfigureBean(Reference reference, ReferenceBean referenceBean) {
         Assert.notNull(interfaceClass, "The interface class must set first!");
+
+        // 创建 DataBinder 对象
         DataBinder dataBinder = new DataBinder(referenceBean);
         // Register CustomEditors for special fields
+        // 注册指定属性的自定义 Editor
         dataBinder.registerCustomEditor(String.class, "filter", new StringTrimmerEditor(true));
         dataBinder.registerCustomEditor(String.class, "listener", new StringTrimmerEditor(true));
         dataBinder.registerCustomEditor(Map.class, "parameters", new PropertyEditorSupport() {
@@ -120,8 +118,8 @@ class ReferenceBeanBuilder extends AbstractAnnotationConfigBeanBuilder<Reference
         });
 
         // Bind annotation attributes
+        // 将注解的属性，设置到 reference 中
         dataBinder.bind(new AnnotationPropertyValuesAdapter(reference, applicationContext.getEnvironment(), IGNORE_FIELD_NAMES));
-
     }
 
 
@@ -147,19 +145,18 @@ class ReferenceBeanBuilder extends AbstractAnnotationConfigBeanBuilder<Reference
 
     @Override
     protected void postConfigureBean(Reference annotation, ReferenceBean bean) throws Exception {
-
+        // 设置 applicationContext
         bean.setApplicationContext(applicationContext);
-
+        // 配置 interfaceClass
         configureInterface(annotation, bean);
-
+        // 配置 ConsumerConfig
         configureConsumerConfig(annotation, bean);
 
+        // 执行 Bean 后置属性初始化
         bean.afterPropertiesSet();
-
     }
 
-    public static ReferenceBeanBuilder create(Reference annotation, ClassLoader classLoader,
-                                              ApplicationContext applicationContext) {
+    public static ReferenceBeanBuilder create(Reference annotation, ClassLoader classLoader, ApplicationContext applicationContext) {
         return new ReferenceBeanBuilder(annotation, classLoader, applicationContext);
     }
 

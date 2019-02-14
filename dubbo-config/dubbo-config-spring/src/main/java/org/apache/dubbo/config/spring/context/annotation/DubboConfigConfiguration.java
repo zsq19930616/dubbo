@@ -62,7 +62,6 @@ public class DubboConfigConfiguration {
             @EnableDubboConfigBinding(prefix = "dubbo.metadata-report", type = MetadataReportConfig.class)
     })
     public static class Single {
-
     }
 
     /**
@@ -80,6 +79,6 @@ public class DubboConfigConfiguration {
             @EnableDubboConfigBinding(prefix = "dubbo.metadata-reports", type = MetadataReportConfig.class, multiple = true)
     })
     public static class Multiple {
-
     }
+
 }

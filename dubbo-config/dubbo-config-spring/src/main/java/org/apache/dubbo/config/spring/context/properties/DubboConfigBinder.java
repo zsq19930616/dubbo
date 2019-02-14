@@ -56,4 +56,5 @@ public interface DubboConfigBinder extends EnvironmentAware {
      * @param dubboConfig
      */
     <C extends AbstractConfig> void bind(String prefix, C dubboConfig);
+
 }

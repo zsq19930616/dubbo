@@ -25,6 +25,9 @@ import org.springframework.core.env.PropertySource;
  */
 public abstract class AbstractDubboConfigBinder implements DubboConfigBinder {
 
+    /**
+     * PropertySource 数组（迭代）
+     */
     private Iterable<PropertySource<?>> propertySources;
 
     private boolean ignoreUnknownFields = true;
@@ -60,10 +63,9 @@ public abstract class AbstractDubboConfigBinder implements DubboConfigBinder {
 
     @Override
     public final void setEnvironment(Environment environment) {
-
         if (environment instanceof ConfigurableEnvironment) {
             this.propertySources = ((ConfigurableEnvironment) environment).getPropertySources();
         }
-
     }
+
 }

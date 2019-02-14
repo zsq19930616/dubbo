@@ -16,22 +16,15 @@
  */
 package org.apache.dubbo.config.spring.beans.factory.annotation;
 
-import org.apache.dubbo.config.AbstractInterfaceConfig;
-import org.apache.dubbo.config.ApplicationConfig;
-import org.apache.dubbo.config.ModuleConfig;
-import org.apache.dubbo.config.MonitorConfig;
-import org.apache.dubbo.config.RegistryConfig;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.dubbo.config.*;
+import org.apache.dubbo.config.spring.util.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
-
-import static org.apache.dubbo.config.spring.util.BeanFactoryUtils.getBeans;
-import static org.apache.dubbo.config.spring.util.BeanFactoryUtils.getOptionalBean;
 
 /**
  * Abstract Configurable {@link Annotation} Bean Builder
@@ -41,14 +34,22 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
 
     protected final Log logger = LogFactory.getLog(getClass());
 
+    /**
+     * 注解
+     */
     protected final A annotation;
 
     protected final ApplicationContext applicationContext;
 
     protected final ClassLoader classLoader;
 
+    /**
+     * Bean 对象
+     */
     protected Object bean;
-
+    /**
+     * 接口
+     */
     protected Class<?> interfaceClass;
 
     protected AbstractAnnotationConfigBeanBuilder(A annotation, ClassLoader classLoader,
@@ -59,7 +60,6 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
         this.annotation = annotation;
         this.applicationContext = applicationContext;
         this.classLoader = classLoader;
-
     }
 
     /**
@@ -69,23 +69,19 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
      * @throws Exception
      */
     public final B build() throws Exception {
-
+        // 校验依赖
         checkDependencies();
-
+        // 执行构造 Bean 对象
         B bean = doBuild();
-
+        // 配置 Bean 对象
         configureBean(bean);
-
         if (logger.isInfoEnabled()) {
             logger.info("The bean[type:" + bean.getClass().getSimpleName() + "] has been built.");
         }
-
         return bean;
-
     }
 
     private void checkDependencies() {
-
     }
 
     /**
@@ -97,64 +93,46 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
 
 
     protected void configureBean(B bean) throws Exception {
-
+        // 前置配置
         preConfigureBean(annotation, bean);
 
+        // 配置 RegistryConfig 属性
         configureRegistryConfigs(bean);
-
+        // 配置 MonitorConfig 属性
         configureMonitorConfig(bean);
-
+        // 配置 ApplicationConfig 属性
         configureApplicationConfig(bean);
-
+        // 配置 ModuleConfig 属性
         configureModuleConfig(bean);
 
+        // 后置配置
         postConfigureBean(annotation, bean);
-
     }
 
-    protected abstract void preConfigureBean(A annotation, B bean) throws Exception;
-
+    protected abstract void preConfigureBean(A annotation, B bean) throws Exception; // 抽象方法
 
     private void configureRegistryConfigs(B bean) {
-
         String[] registryConfigBeanIds = resolveRegistryConfigBeanNames(annotation);
-
-        List<RegistryConfig> registryConfigs = getBeans(applicationContext, registryConfigBeanIds, RegistryConfig.class);
-
+        List<RegistryConfig> registryConfigs = BeanFactoryUtils.getBeans(applicationContext, registryConfigBeanIds, RegistryConfig.class);
         bean.setRegistries(registryConfigs);
-
     }
 
     private void configureMonitorConfig(B bean) {
-
         String monitorBeanName = resolveMonitorConfigBeanName(annotation);
-
-        MonitorConfig monitorConfig = getOptionalBean(applicationContext, monitorBeanName, MonitorConfig.class);
-
+        MonitorConfig monitorConfig = BeanFactoryUtils.getOptionalBean(applicationContext, monitorBeanName, MonitorConfig.class);
         bean.setMonitor(monitorConfig);
-
     }
 
     private void configureApplicationConfig(B bean) {
-
         String applicationConfigBeanName = resolveApplicationConfigBeanName(annotation);
-
-        ApplicationConfig applicationConfig =
-                getOptionalBean(applicationContext, applicationConfigBeanName, ApplicationConfig.class);
-
+        ApplicationConfig applicationConfig = BeanFactoryUtils.getOptionalBean(applicationContext, applicationConfigBeanName, ApplicationConfig.class);
         bean.setApplication(applicationConfig);
-
     }
 
     private void configureModuleConfig(B bean) {
-
         String moduleConfigBeanName = resolveModuleConfigBeanName(annotation);
-
-        ModuleConfig moduleConfig =
-                getOptionalBean(applicationContext, moduleConfigBeanName, ModuleConfig.class);
-
+        ModuleConfig moduleConfig = BeanFactoryUtils.getOptionalBean(applicationContext, moduleConfigBeanName, ModuleConfig.class);
         bean.setModule(moduleConfig);
-
     }
 
     /**
@@ -163,7 +141,7 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
      * @param annotation {@link A}
      * @return
      */
-    protected abstract String resolveModuleConfigBeanName(A annotation);
+    protected abstract String resolveModuleConfigBeanName(A annotation); // 抽象方法
 
     /**
      * Resolves the bean name of {@link ApplicationConfig}
@@ -171,7 +149,7 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
      * @param annotation {@link A}
      * @return
      */
-    protected abstract String resolveApplicationConfigBeanName(A annotation);
+    protected abstract String resolveApplicationConfigBeanName(A annotation); // 抽象方法
 
 
     /**
@@ -180,7 +158,7 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
      * @param annotation {@link A}
      * @return non-empty array
      */
-    protected abstract String[] resolveRegistryConfigBeanNames(A annotation);
+    protected abstract String[] resolveRegistryConfigBeanNames(A annotation); // 抽象方法
 
     /**
      * Resolves the bean name of {@link MonitorConfig}
@@ -188,7 +166,7 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
      * @param annotation {@link A}
      * @return
      */
-    protected abstract String resolveMonitorConfigBeanName(A annotation);
+    protected abstract String resolveMonitorConfigBeanName(A annotation); // 抽象方法
 
     /**
      * Configures Bean
@@ -196,8 +174,7 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
      * @param annotation
      * @param bean
      */
-    protected abstract void postConfigureBean(A annotation, B bean) throws Exception;
-
+    protected abstract void postConfigureBean(A annotation, B bean) throws Exception; // 抽象方法
 
     public <T extends AbstractAnnotationConfigBeanBuilder<A, B>> T bean(Object bean) {
         this.bean = bean;

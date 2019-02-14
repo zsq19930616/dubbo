@@ -16,14 +16,13 @@
  */
 package org.apache.dubbo.config.spring.beans.factory.annotation;
 
+import org.apache.dubbo.config.spring.util.AnnotationUtils;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.PropertyValues;
 import org.springframework.core.env.PropertyResolver;
 
 import java.lang.annotation.Annotation;
-
-import static org.apache.dubbo.config.spring.util.AnnotationUtils.getAttributes;
 
 /**
  * {@link Annotation} {@link PropertyValues} Adapter
@@ -46,6 +45,7 @@ class AnnotationPropertyValuesAdapter implements PropertyValues {
         this.annotation = annotation;
         this.propertyResolver = propertyResolver;
         this.ignoreDefaultValue = ignoreDefaultValue;
+        // 增加了适配，将注解的所有属性，进行获取，然后封装成 PropertyValues 对象
         this.delegate = adapt(annotation, ignoreDefaultValue, ignoreAttributeNames);
     }
 
@@ -54,7 +54,7 @@ class AnnotationPropertyValuesAdapter implements PropertyValues {
     }
 
     private PropertyValues adapt(Annotation annotation, boolean ignoreDefaultValue, String... ignoreAttributeNames) {
-        return new MutablePropertyValues(getAttributes(annotation, propertyResolver, ignoreDefaultValue, ignoreAttributeNames));
+        return new MutablePropertyValues(AnnotationUtils.getAttributes(annotation, propertyResolver, ignoreDefaultValue, ignoreAttributeNames));
     }
 
     public Annotation getAnnotation() {

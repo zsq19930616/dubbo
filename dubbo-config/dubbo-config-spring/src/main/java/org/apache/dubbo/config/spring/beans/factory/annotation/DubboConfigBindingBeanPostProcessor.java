@@ -39,18 +39,21 @@ import org.springframework.core.env.Environment;
  * @see DubboConfigBindingRegistrar
  * @since 2.5.8
  */
-
 public class DubboConfigBindingBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware, InitializingBean {
 
     private final Log log = LogFactory.getLog(getClass());
 
     /**
      * The prefix of Configuration Properties
+     *
+     * 配置属性的前缀
      */
     private final String prefix;
 
     /**
      * Binding Bean Name
+     *
+     * Bean 的名字
      */
     private final String beanName;
 
@@ -58,8 +61,14 @@ public class DubboConfigBindingBeanPostProcessor implements BeanPostProcessor, A
 
     private ApplicationContext applicationContext;
 
+    /**
+     * 是否忽略位置的属性
+     */
     private boolean ignoreUnknownFields = true;
 
+    /**
+     * 是否忽略类型不对的属性
+     */
     private boolean ignoreInvalidFields = true;
 
     /**
@@ -75,21 +84,16 @@ public class DubboConfigBindingBeanPostProcessor implements BeanPostProcessor, A
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-
+        // 判断必须是 beanName ，并且是 AbstractConfig 类型
         if (beanName.equals(this.beanName) && bean instanceof AbstractConfig) {
-
             AbstractConfig dubboConfig = (AbstractConfig) bean;
-
+            // 设置属性到 dubboConfig 中
             dubboConfigBinder.bind(prefix, dubboConfig);
-
             if (log.isInfoEnabled()) {
-                log.info("The properties of bean [name : " + beanName + "] have been binding by prefix of " +
-                        "configuration properties : " + prefix);
+                log.info("The properties of bean [name : " + beanName + "] have been binding by prefix of " + "configuration properties : " + prefix);
             }
         }
-
         return bean;
-
     }
 
     public boolean isIgnoreUnknownFields() {
@@ -128,7 +132,7 @@ public class DubboConfigBindingBeanPostProcessor implements BeanPostProcessor, A
 
     @Override
     public void afterPropertiesSet() throws Exception {
-
+        // 获得（创建）DubboConfigBinder 对象
         if (dubboConfigBinder == null) {
             try {
                 dubboConfigBinder = applicationContext.getBean(DubboConfigBinder.class);
@@ -140,10 +144,9 @@ public class DubboConfigBindingBeanPostProcessor implements BeanPostProcessor, A
                 dubboConfigBinder = createDubboConfigBinder(applicationContext.getEnvironment());
             }
         }
-
+        // 设置 ignoreUnknownFields、ignoreInvalidFields 属性
         dubboConfigBinder.setIgnoreUnknownFields(ignoreUnknownFields);
         dubboConfigBinder.setIgnoreInvalidFields(ignoreInvalidFields);
-
     }
 
     /**
@@ -153,7 +156,9 @@ public class DubboConfigBindingBeanPostProcessor implements BeanPostProcessor, A
      * @return {@link DefaultDubboConfigBinder}
      */
     protected DubboConfigBinder createDubboConfigBinder(Environment environment) {
+        // 创建 DefaultDubboConfigBinder 对象
         DefaultDubboConfigBinder defaultDubboConfigBinder = new DefaultDubboConfigBinder();
+        // 设置 environment 属性
         defaultDubboConfigBinder.setEnvironment(environment);
         return defaultDubboConfigBinder;
     }

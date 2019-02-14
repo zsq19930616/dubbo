@@ -48,4 +48,5 @@ public class ServiceBeanExportedEvent extends ApplicationEvent {
     public ServiceBean getServiceBean() {
         return (ServiceBean) super.getSource();
     }
+
 }

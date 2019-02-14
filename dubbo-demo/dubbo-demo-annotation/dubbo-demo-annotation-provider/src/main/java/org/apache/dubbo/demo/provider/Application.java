@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 public class Application {
+
     /**
      * In order to make sure multicast registry works, need to specify '-Djava.net.preferIPv4Stack=true' before
      * launch the application
@@ -38,14 +39,17 @@ public class Application {
     }
 
     @Configuration
-    @EnableDubbo(scanBasePackages = "org.apache.dubbo.demo.provider")
+    @EnableDubbo(scanBasePackages = "org.apache.dubbo.demo.provider", multipleConfig = true)
     @PropertySource("classpath:/spring/dubbo-provider.properties")
     static class ProviderConfiguration {
+
         @Bean
         public RegistryConfig registryConfig() {
             RegistryConfig registryConfig = new RegistryConfig();
             registryConfig.setAddress("multicast://224.5.6.7:1234");
             return registryConfig;
         }
+
     }
+
 }

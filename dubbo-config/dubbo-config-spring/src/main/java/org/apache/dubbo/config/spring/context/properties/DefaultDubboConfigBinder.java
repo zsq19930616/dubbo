@@ -17,13 +17,11 @@
 package org.apache.dubbo.config.spring.context.properties;
 
 import org.apache.dubbo.config.AbstractConfig;
-
+import org.apache.dubbo.config.spring.util.PropertySourcesUtils;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.validation.DataBinder;
 
 import java.util.Map;
-
-import static org.apache.dubbo.config.spring.util.PropertySourcesUtils.getSubProperties;
 
 /**
  * Default {@link DubboConfigBinder} implementation based on Spring {@link DataBinder}
@@ -32,17 +30,21 @@ public class DefaultDubboConfigBinder extends AbstractDubboConfigBinder {
 
     @Override
     public <C extends AbstractConfig> void bind(String prefix, C dubboConfig) {
+        // 将 dubboConfig 包装成 DataBinder 对象
         DataBinder dataBinder = new DataBinder(dubboConfig);
         // Set ignored*
+        // 设置响应的 ignored* 属性
         dataBinder.setIgnoreInvalidFields(isIgnoreInvalidFields());
         dataBinder.setIgnoreUnknownFields(isIgnoreUnknownFields());
         // Get properties under specified prefix from PropertySources
-        Map<String, Object> properties = getSubProperties(getPropertySources(), prefix);
+        // 获得 prefix 开头的配置属性
+        Map<String, Object> properties = PropertySourcesUtils.getSubProperties(getPropertySources(), prefix);
         // Convert Map to MutablePropertyValues
+        // 创建 MutablePropertyValues 对象
         MutablePropertyValues propertyValues = new MutablePropertyValues(properties);
         // Bind
+        // 绑定配置属性到 dubboConfig 中
         dataBinder.bind(propertyValues);
     }
 
 }
-

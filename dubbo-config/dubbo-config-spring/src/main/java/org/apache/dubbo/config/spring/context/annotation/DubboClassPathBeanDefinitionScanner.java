@@ -39,22 +39,15 @@ public class DubboClassPathBeanDefinitionScanner extends ClassPathBeanDefinition
 
     public DubboClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry, boolean useDefaultFilters, Environment environment,
                                                ResourceLoader resourceLoader) {
-
         super(registry, useDefaultFilters);
-
         setEnvironment(environment);
-
         setResourceLoader(resourceLoader);
-
         registerAnnotationConfigProcessors(registry);
-
     }
 
     public DubboClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry, Environment environment,
                                                ResourceLoader resourceLoader) {
-
         this(registry, false, environment, resourceLoader);
-
     }
 
     @Override

@@ -32,7 +32,7 @@ import java.util.Arrays;
  * The source code is cloned from https://github.com/alibaba/spring-context-support/blob/1.0.2/src/main/java/com/alibaba/spring/util/AnnotatedBeanDefinitionRegistryUtils.java
  * @since 2.6.6
  */
-public abstract class AnnotatedBeanDefinitionRegistryUtils {
+    public abstract class AnnotatedBeanDefinitionRegistryUtils {
 
     private static final Log logger = LogFactory.getLog(AnnotatedBeanDefinitionRegistryUtils.class);
 
@@ -43,20 +43,17 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils {
      * @param annotatedClasses {@link Annotation annotation} class
      */
     public static void registerBeans(BeanDefinitionRegistry registry, Class<?>... annotatedClasses) {
-
         if (ObjectUtils.isEmpty(annotatedClasses)) {
             return;
         }
-
         boolean debugEnabled = logger.isDebugEnabled();
-
+        // 创建 AnnotatedBeanDefinitionReader 对象
         AnnotatedBeanDefinitionReader reader = new AnnotatedBeanDefinitionReader(registry);
-
         if (debugEnabled) {
             logger.debug(registry.getClass().getSimpleName() + " will register annotated classes : " + Arrays.asList(annotatedClasses) + " .");
         }
-
+        // 注册
         reader.register(annotatedClasses);
-
     }
+
 }
