@@ -18,17 +18,12 @@ package com.alibaba.dubbo.common.utils;
 
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.io.UnsafeStringWriter;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.dubbo.common.logger.Logger;
 import com.alibaba.dubbo.common.logger.LoggerFactory;
+import com.alibaba.fastjson.JSON;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -351,7 +346,7 @@ public final class StringUtils {
 
     /**
      * 获得服务键
-     *
+     * <p>
      * 格式为 ${group}/${interface}:${version}
      * 例如，com.alibaba.dubbo.demo.DemoService
      *
@@ -395,25 +390,44 @@ public final class StringUtils {
         return buf.toString();
     }
 
+    /**
+     * 驼峰分割名称
+     *  示例：方法名为 getAbstractBoom();
+     *  实际返回 abstract[split]boom
+     *          abstract.boom
+     * @param camelName
+     * @param split
+     * @return
+     */
     public static String camelToSplitName(String camelName, String split) {
+        // 名称为空直接返回
         if (camelName == null || camelName.length() == 0) {
             return camelName;
         }
+        // 构建 sb 拼接字符串
         StringBuilder buf = null;
+        // 遍历每一个字符
         for (int i = 0; i < camelName.length(); i++) {
+            // 获取当前遍历的字符
             char ch = camelName.charAt(i);
+            // 判断是否为大写
             if (ch >= 'A' && ch <= 'Z') {
+                // 第一次，如果buf为null，创建对象
                 if (buf == null) {
                     buf = new StringBuilder();
+                    // i 大于 0 时，追加
                     if (i > 0) {
                         buf.append(camelName.substring(0, i));
                     }
                 }
+                // i 大于0 时，拼接 split
                 if (i > 0) {
                     buf.append(split);
                 }
+                // 传为小写拼接。
                 buf.append(Character.toLowerCase(ch));
             } else if (buf != null) {
+                // 拼接
                 buf.append(ch);
             }
         }
@@ -422,7 +436,7 @@ public final class StringUtils {
 
     /**
      * 将参数数组，拼接成字符串。
-     *
+     * <p>
      * 1. 使用逗号分隔
      * 2. 使用 JSON 格式化对象
      *

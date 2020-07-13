@@ -39,36 +39,47 @@ public class ApplicationConfig extends AbstractConfig {
     private static final long serialVersionUID = 5508512956753757169L;
 
     // application name
+    // 应用名称
     private String name;
 
     // module version
+    // 版本号
     private String version;
 
     // application owner
+    // 作者
     private String owner;
 
     // application's organization (BU)
+    // 机构部门
     private String organization;
 
     // architecture layer
+    // 架构层面
     private String architecture;
 
     // environment, e.g. dev, test or production
+    // 服务环境
     private String environment;
 
     // Java compiler
+    // 字节码编译器 一般为动态生成字节码
     private String compiler; // TODO 芋艿
 
     // logger
+    // 日期支持
     private String logger;
 
     // registry centers
+    // 注册中心配置集合
     private List<RegistryConfig> registries;
 
     // monitor center
+    // 监控中心配置
     private MonitorConfig monitor;
 
     // is default or not
+    // 是否默认
     private Boolean isDefault; // TODO 芋艿
 
     /**
@@ -76,21 +87,28 @@ public class ApplicationConfig extends AbstractConfig {
      *
      * @see <a href="http://dubbo.io/books/dubbo-user-book/demos/dump.html">线程栈自动 dump</a>
      */
+    // 转储目录
     private String dumpDirectory; // TODO 芋艿
 
+    // qos 启用
     private Boolean qosEnable; // TODO 芋艿
 
+    // qos 端口
     private Integer qosPort;
 
+    // qos 异步
     private Boolean qosAcceptForeignIp;
 
     // customized parameters
     private Map<String, String> parameters;
 
+    // 无参构造器
     public ApplicationConfig() {
     }
 
+    // new 对象，初始化应用名称构造器
     public ApplicationConfig(String name) {
+        // 设置应用名称
         setName(name);
     }
 
@@ -100,8 +118,10 @@ public class ApplicationConfig extends AbstractConfig {
     }
 
     public void setName(String name) {
+        // 检查名称
         checkName("name", name);
         this.name = name;
+        // 如果id没有值，默认将 应用名称 赋值给 id
         if (id == null || id.length() == 0) {
             id = name;
         }

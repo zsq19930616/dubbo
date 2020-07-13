@@ -137,25 +137,34 @@ public abstract class AbstractConfig implements Serializable {
      * @param config 配置对象
      */
     protected static void appendProperties(AbstractConfig config) {
+        // 检查配置类
         if (config == null) {
             return;
         }
+        // 前缀为 dubbo.xxx.
+        // 示例 类名 HelloConfig
+        // prefix 为：dubbo.hello.
         String prefix = "dubbo." + getTagName(config.getClass()) + ".";
+        // 获取配置类的方法数组
         Method[] methods = config.getClass().getMethods();
+        // 遍历数组处理
         for (Method method : methods) {
             try {
+                // 获取方法名
                 String name = method.getName();
+                // set 方法
                 if (name.length() > 3 && name.startsWith("set") && Modifier.isPublic(method.getModifiers()) // 方法是 public 的 setting 方法。
                         && method.getParameterTypes().length == 1 && isPrimitive(method.getParameterTypes()[0])) { // 方法的唯一参数是基本数据类型
                     // 获得属性名，例如 `ApplicationConfig#setName(...)` 方法，对应的属性名为 name 。
                     String property = StringUtils.camelToSplitName(name.substring(3, 4).toLowerCase() + name.substring(4), ".");
-
                     // 【启动参数变量】优先从带有 `Config#id` 的配置中获取，例如：`dubbo.application.demo-provider.name` 。
                     String value = null;
                     if (config.getId() != null && config.getId().length() > 0) {
-                        String pn = prefix + config.getId() + "." + property; // 带有 `Config#id`
+                        // 带有 `Config#id`
+                        String pn = prefix + config.getId() + "." + property;
                         value = System.getProperty(pn);
                         if (!StringUtils.isBlank(value)) {
+                            // 系统级别优先
                             logger.info("Use System Property " + pn + " to config dubbo");
                         }
                     }
@@ -218,13 +227,18 @@ public abstract class AbstractConfig implements Serializable {
      * @return 标签
      */
     private static String getTagName(Class<?> cls) {
+        // 获取类名
         String tag = cls.getSimpleName();
+
         for (String suffix : SUFFIXES) {
+            // 判断是否为 Config or Bean 结尾
             if (tag.endsWith(suffix)) {
+                // 截图后缀之前的字符串
                 tag = tag.substring(0, tag.length() - suffix.length());
                 break;
             }
         }
+        // 转为小写返回
         tag = tag.toLowerCase();
         return tag;
     }
@@ -242,62 +256,85 @@ public abstract class AbstractConfig implements Serializable {
      */
     @SuppressWarnings("unchecked")
     protected static void appendParameters(Map<String, String> parameters, Object config, String prefix) {
+        // 检查配置类是否为空
         if (config == null) {
             return;
         }
+        // 获取public方法
         Method[] methods = config.getClass().getMethods();
         for (Method method : methods) {
             try {
+                // 获取方法名
                 String name = method.getName();
+                // 判断是否是方法是否是 get 或者 is 开头，是公共方法，没有形参，方法名不是 getClass 返回值类型指定的
                 if ((name.startsWith("get") || name.startsWith("is"))
                         && !"getClass".equals(name)
                         && Modifier.isPublic(method.getModifiers())
                         && method.getParameterTypes().length == 0
                         && isPrimitive(method.getReturnType())) { // 方法为获取基本类型，public 的 getting 方法。
+                    // 从方法上获取 @Parameter 注解
                     Parameter parameter = method.getAnnotation(Parameter.class);
+                    // 方法的返回值是 Object 或者 parameter注解不为空，但是 是 被忽略的标记
                     if (method.getReturnType() == Object.class || parameter != null && parameter.excluded()) {
                         continue;
                     }
                     // 获得属性名
                     int i = name.startsWith("get") ? 3 : 2;
+                    // 首字母变为小写
+                    // name.substring(i, i + 1).toLowerCase() + name.substring(i + 1)
+                    // StringUtils.camelToSplitName("abstractBoom",".")
+                    // 实际返回 abstract.boom
                     String prop = StringUtils.camelToSplitName(name.substring(i, i + 1).toLowerCase() + name.substring(i + 1), ".");
                     String key;
+                    // 注解 声明 key 优先
                     if (parameter != null && parameter.key() != null && parameter.key().length() > 0) {
                         key = parameter.key();
                     } else {
+                        // 否则 key为 prop
                         key = prop;
                     }
-                    // 获得属性值
+                    // 获得属性值 也就是 属性get方法返回值
                     Object value = method.invoke(config, new Object[0]);
+                    // 转为字符串去除首位空格
                     String str = String.valueOf(value).trim();
+                    // 判断字符串不为空
                     if (value != null && str.length() > 0) {
-                        // 转义
+                        // 转义 判断是否需要转义
                         if (parameter != null && parameter.escaped()) {
                             str = URL.encode(str);
                         }
                         // 拼接，详细说明参见 `Parameter#append()` 方法的说明。
                         if (parameter != null && parameter.append()) {
+                            // 如果时追加，从 parameters 获取原来的。
+                            // default 默认值
                             String pre = parameters.get(Constants.DEFAULT_KEY + "." + key); // default. 里获取，适用于 ServiceConfig =》ProviderConfig 、ReferenceConfig =》ConsumerConfig 。
+                            // 逗号拼接追加
                             if (pre != null && pre.length() > 0) {
                                 str = pre + "," + str;
                             }
+                            // 一个是带前缀，一个不带前缀。
+                            // 有非默认值的。
                             pre = parameters.get(key); // 通过 `parameters` 属性配置，例如 `AbstractMethodConfig.parameters` 。
                             if (pre != null && pre.length() > 0) {
                                 str = pre + "," + str;
                             }
                         }
+                        // 指定前缀
                         if (prefix != null && prefix.length() > 0) {
                             key = prefix + "." + key;
                         }
+                        // 添加到参数集合中
                         parameters.put(key, str);
 //                        System.out.println("kv:" + key + "\t" + str);
                     } else if (parameter != null && parameter.required()) {
+                        // 不符合条件，抛出异常
                         throw new IllegalStateException(config.getClass().getSimpleName() + "." + key + " == null");
                     }
                 } else if ("getParameters".equals(name)
                         && Modifier.isPublic(method.getModifiers())
                         && method.getParameterTypes().length == 0
                         && method.getReturnType() == Map.class) { // `#getParameters()` 方法
+                    // 指定返回的数据。
                     Map<String, String> map = (Map<String, String>) method.invoke(config, new Object[0]);
                     if (map != null && map.size() > 0) {
                         String pre = (prefix != null && prefix.length() > 0 ? prefix + "." : "");
@@ -444,6 +481,11 @@ public abstract class AbstractConfig implements Serializable {
         checkProperty(property, value, MAX_PATH_LENGTH, null);
     }
 
+    /**
+     * 校验应用名称
+     * @param property
+     * @param value
+     */
     protected static void checkName(String property, String value) {
         checkProperty(property, value, MAX_LENGTH, PATTERN_NAME);
     }
@@ -479,15 +521,21 @@ public abstract class AbstractConfig implements Serializable {
     }
 
     protected static void checkProperty(String property, String value, int maxlength, Pattern pattern) {
+        // value 没有值，直接结束方法
         if (value == null || value.length() == 0) {
             return;
         }
+        // value 大于 maxlength，抛出异常
         if (value.length() > maxlength) {
+            // 校验 属性=值 大于最大长度
             throw new IllegalStateException("Invalid " + property + "=\"" + value + "\" is longer than " + maxlength);
         }
+        // 正则不为空
         if (pattern != null) {
+            // 校验值是否合规
             Matcher matcher = pattern.matcher(value);
             if (!matcher.matches()) {
+                // 校验 属性=值 包含非法字符，仅支持 数字、字母、-、_、和 . 为合法的
                 throw new IllegalStateException("Invalid " + property + "=\"" + value + "\" contain illegal charactor, only digit, letter, '-', '_' and '.' is legal.");
             }
         }
@@ -503,6 +551,7 @@ public abstract class AbstractConfig implements Serializable {
     }
 
     protected void appendAnnotation(Class<?> annotationClass, Object annotation) {
+        // 获取注解类的方法
         Method[] methods = annotationClass.getMethods();
         for (Method method : methods) {
             if (method.getDeclaringClass() != Object.class
