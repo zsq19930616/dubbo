@@ -362,20 +362,27 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
      */
     protected void checkInterfaceAndMethods(Class<?> interfaceClass, List<MethodConfig> methods) {
         // interface cannot be null
+        // 检查下参数
         if (interfaceClass == null) {
             throw new IllegalStateException("interface not allow null!");
         }
         // to verify interfaceClass is an interface
+        // 不是接口，闹着玩呢。抛出异常，不是一个接口
         if (!interfaceClass.isInterface()) {
             throw new IllegalStateException("The interface class " + interfaceClass + " is not a interface!");
         }
         // check if methods exist in the interface
+        // 检查接口中方法
         if (methods != null && !methods.isEmpty()) {
             for (MethodConfig methodBean : methods) {
+                // 获取方法名
                 String methodName = methodBean.getName();
+                // 配置有问题。
+                // dubbo service 中 方法这个名称必须有
                 if (methodName == null || methodName.length() == 0) {
                     throw new IllegalStateException("<dubbo:method> name attribute is required! Please check: <dubbo:service interface=\"" + interfaceClass.getName() + "\" ... ><dubbo:method name=\"\" ... /></<dubbo:reference>");
                 }
+                // 反射判断是否有这个方法名
                 boolean hasMethod = false;
                 for (java.lang.reflect.Method method : interfaceClass.getMethods()) {
                     if (method.getName().equals(methodName)) {
@@ -383,6 +390,8 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                         break;
                     }
                 }
+                // 没有这个方法，兄弟，从哪偷的，复制都能出错
+                // 友好异常信息：这个方法中没有找到你的这个方法
                 if (!hasMethod) {
                     throw new IllegalStateException("The interface " + interfaceClass.getName()
                             + " not found method " + methodName);
@@ -399,7 +408,9 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
     protected void checkStubAndMock(Class<?> interfaceClass) {
         // `local` 配置项的校验，和 `stub` 一样。
         if (ConfigUtils.isNotEmpty(local)) {
+            // local 是否缓存吧，有一般时带 Local后缀
             Class<?> localClass = ConfigUtils.isDefault(local) ? ReflectUtils.forName(interfaceClass.getName() + "Local") : ReflectUtils.forName(local);
+            // 你这个类没有实现我这个接口，沙雕
             if (!interfaceClass.isAssignableFrom(localClass)) {
                 throw new IllegalStateException("The local implementation class " + localClass.getName() + " not implement interface " + interfaceClass.getName());
             }
