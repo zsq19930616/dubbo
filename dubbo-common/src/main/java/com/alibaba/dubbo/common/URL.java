@@ -1061,14 +1061,23 @@ public final class URL implements Serializable {
         return value != null && value.length() > 0;
     }
 
+    /**
+     * 判断是否是 本地host
+     * @return
+     */
     public boolean isLocalHost() {
         return NetUtils.isLocalHost(host) || getParameter(Constants.LOCALHOST_KEY, false);
     }
 
+    /**
+     * 是否任意host.在我理解就是任意IP都可以访问吧，暂定
+     * @return
+     */
     public boolean isAnyHost() {
         return Constants.ANYHOST_VALUE.equals(host) || getParameter(Constants.ANYHOST_KEY, false);
     }
 
+    // 参数编码，放入map集合中
     public URL addParameterAndEncoded(String key, String value) {
         if (value == null || value.length() == 0) {
             return this;
@@ -1076,6 +1085,7 @@ public final class URL implements Serializable {
         return addParameter(key, encode(value));
     }
 
+    // 又一波重载方法
     public URL addParameter(String key, boolean value) {
         return addParameter(key, String.valueOf(value));
     }
@@ -1123,21 +1133,27 @@ public final class URL implements Serializable {
         return addParameter(key, String.valueOf(value));
     }
 
+    // 真正添加参数的方法逻辑
     public URL addParameter(String key, String value) {
+        // key 或者 value 不存在，直接返回当前对象
         if (key == null || key.length() == 0
                 || value == null || value.length() == 0) {
             return this;
         }
         // if value doesn't change, return immediately
+        // value已经存在了，直接返回
         if (value.equals(getParameters().get(key))) { // value != null
             return this;
         }
-
+        // 创建新的集合对象
         Map<String, String> map = new HashMap<String, String>(getParameters());
+        // 添加到集合中
         map.put(key, value);
+        // 生成新的对象返回
         return new URL(protocol, username, password, host, port, path, map);
     }
 
+    // 如果 key 不存在 添加 value，否则直接返回 this
     public URL addParameterIfAbsent(String key, String value) {
         if (key == null || key.length() == 0
                 || value == null || value.length() == 0) {
@@ -1146,6 +1162,7 @@ public final class URL implements Serializable {
         if (hasParameter(key)) {
             return this;
         }
+        // 新增的值
         Map<String, String> map = new HashMap<String, String>(getParameters());
         map.put(key, value);
         return new URL(protocol, username, password, host, port, path, map);
@@ -1157,20 +1174,28 @@ public final class URL implements Serializable {
      * @param parameters parameters in key-value pairs
      * @return A new URL
      */
+    // 添加参数集合到新的 URL 对象中
     public URL addParameters(Map<String, String> parameters) {
+        // 为空直接返回
         if (parameters == null || parameters.size() == 0) {
             return this;
         }
 
         boolean hasAndEqual = true;
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
+            // this.getParameters()
+            // 判断调用者中有没有这个key
             String value = getParameters().get(entry.getKey());
+            // value 为空
             if (value == null) {
+                // 我有
                 if (entry.getValue() != null) {
+                    // 不一样
                     hasAndEqual = false;
                     break;
                 }
             } else {
+                // 有，但是两个值不一样
                 if (!value.equals(entry.getValue())) {
                     hasAndEqual = false;
                     break;
@@ -1178,10 +1203,13 @@ public final class URL implements Serializable {
             }
         }
         // return immediately if there's no change
+        // 值都一样，就不用覆盖了，直接返回 this
         if (hasAndEqual) return this;
 
+        // 有不一样的，方法参数中的map覆盖掉当前this中的。
         Map<String, String> map = new HashMap<String, String>(getParameters());
         map.putAll(parameters);
+        // 生成新的 URL 返回
         return new URL(protocol, username, password, host, port, path, map);
     }
 
@@ -1194,13 +1222,18 @@ public final class URL implements Serializable {
         return new URL(protocol, username, password, host, port, path, map);
     }
 
+    // 来了个可变参数。。。
+    // 看方法意思是  key,value,key,value... 这样的组合咯
     public URL addParameters(String... pairs) {
+        // 为空，忽略
         if (pairs == null || pairs.length == 0) {
             return this;
         }
+        // 不满足要求，抛出异常. 参数必须是偶数倍
         if (pairs.length % 2 != 0) {
             throw new IllegalArgumentException("Map pairs can not be odd number.");
         }
+        // 拆解到 map 中。
         Map<String, String> map = new HashMap<String, String>();
         int len = pairs.length / 2;
         for (int i = 0; i < len; i++) {
@@ -1209,13 +1242,17 @@ public final class URL implements Serializable {
         return addParameters(map);
     }
 
+    // 添加 query 也就是 get 请求 ? 后面的一大坨子
     public URL addParameterString(String query) {
+        // 没有忽略
         if (query == null || query.length() == 0) {
             return this;
         }
+        // parseQueryString(String s) 解析成map，添加过去
         return addParameters(StringUtils.parseQueryString(query));
     }
 
+    // 移除指定的参数
     public URL removeParameter(String key) {
         if (key == null || key.length() == 0) {
             return this;
@@ -1230,6 +1267,7 @@ public final class URL implements Serializable {
         return removeParameters(keys.toArray(new String[0]));
     }
 
+    // 移除指定的后又生成新的 URL 对象
     public URL removeParameters(String... keys) {
         if (keys == null || keys.length == 0) {
             return this;
@@ -1244,10 +1282,12 @@ public final class URL implements Serializable {
         return new URL(protocol, username, password, host, port, path, map);
     }
 
+    // 返回没有参数的 URL
     public URL clearParameters() {
         return new URL(protocol, username, password, host, port, path, new HashMap<String, String>());
     }
 
+    // 获取参数
     public String getRawParameter(String key) {
         if ("protocol".equals(key))
             return protocol;
@@ -1264,6 +1304,7 @@ public final class URL implements Serializable {
         return getParameter(key);
     }
 
+    // 转为 map返回
     public Map<String, String> toMap() {
         Map<String, String> map = new HashMap<String, String>(parameters);
         if (protocol != null)
@@ -1282,9 +1323,11 @@ public final class URL implements Serializable {
     }
 
     public String toString() {
+        // 有值就返回
         if (string != null) {
             return string;
         }
+        // 构建返回
         return string = buildString(false, true); // no show username and password
     }
 
@@ -1328,20 +1371,26 @@ public final class URL implements Serializable {
     }
 
     private void buildParameters(StringBuilder buf, boolean concat, String[] parameters) {
+        // 看看参数集合有么有值
         if (getParameters() != null && getParameters().size() > 0) {
+            // 方法传入的参数.下面看了看啊，parameters为空，全部显示，不为空，显示指定的。奶奶个腿
             List<String> includes = (parameters == null || parameters.length == 0 ? null : Arrays.asList(parameters));
+            // 是否第一次
             boolean first = true;
             for (Map.Entry<String, String> entry : new TreeMap<String, String>(getParameters()).entrySet()) {
                 if (entry.getKey() != null && entry.getKey().length() > 0
                         && (includes == null || includes.contains(entry.getKey()))) {
+                    // 第一次拼接个 ?
                     if (first) {
                         if (concat) {
                             buf.append("?");
                         }
                         first = false;
                     } else {
+                        // 不是第一次了，那就拼接 &
                         buf.append("&");
                     }
+                    // ?key=value&key=value
                     buf.append(entry.getKey());
                     buf.append("=");
                     buf.append(entry.getValue() == null ? "" : entry.getValue().trim());
@@ -1350,16 +1399,35 @@ public final class URL implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param appendUser        是否展示用户
+     * @param appendParameter   是否展示参数
+     * @param parameters        参数
+     * @return
+     */
     private String buildString(boolean appendUser, boolean appendParameter, String... parameters) {
         return buildString(appendUser, appendParameter, false, false, parameters);
     }
 
+    /**
+     *
+     * @param appendUser        是否显示用户
+     * @param appendParameter   是否显示参数
+     * @param useIP             是否显示IP
+     * @param useService        是否显示service
+     * @param parameters        参数
+     * @return
+     */
     private String buildString(boolean appendUser, boolean appendParameter, boolean useIP, boolean useService, String... parameters) {
+        // 开始sb拼接
         StringBuilder buf = new StringBuilder();
+        // 协议
         if (protocol != null && protocol.length() > 0) {
             buf.append(protocol);
             buf.append("://");
         }
+        // 显示用户才拼接用户和密码
         if (appendUser && username != null && username.length() > 0) {
             buf.append(username);
             if (password != null && password.length() > 0) {
@@ -1368,12 +1436,14 @@ public final class URL implements Serializable {
             }
             buf.append("@");
         }
+        // 显示IP拼接IP，否则拼接 host 地址
         String host;
         if (useIP) {
             host = getIp();
         } else {
             host = getHost();
         }
+        // 有端口就拼接
         if (host != null && host.length() > 0) {
             buf.append(host);
             if (port > 0) {
@@ -1381,22 +1451,27 @@ public final class URL implements Serializable {
                 buf.append(port);
             }
         }
+        // 应用名
+        // getServiceKey 啥玩意？ 看一番.返回 接口/组:版本号
         String path;
         if (useService) {
             path = getServiceKey();
         } else {
             path = getPath();
         }
+        // 来个前缀  /
         if (path != null && path.length() > 0) {
             buf.append("/");
             buf.append(path);
         }
+        // 拼接参数
         if (appendParameter) {
             buildParameters(buf, true, parameters);
         }
         return buf.toString();
     }
 
+    // 转为 JDK URL
     public java.net.URL toJavaURL() {
         try {
             return new java.net.URL(toString());
@@ -1405,6 +1480,7 @@ public final class URL implements Serializable {
         }
     }
 
+    // 转为 InetSocketAddress
     public InetSocketAddress toInetSocketAddress() {
         return new InetSocketAddress(host, port);
     }
@@ -1418,14 +1494,20 @@ public final class URL implements Serializable {
      * @return 键
      */
     public String getServiceKey() {
+        // 接口名
         String inf = getServiceInterface();
+        // 没找到，返回null
         if (inf == null) return null;
+        // 找到了。
         StringBuilder buf = new StringBuilder();
+        // 看看属于哪个组
         String group = getParameter(Constants.GROUP_KEY);
+        // 有值就拼接
         if (group != null && group.length() > 0) {
             buf.append(group).append("/");
         }
         buf.append(inf);
+        // 版本号也来看看
         String version = getParameter(Constants.VERSION_KEY);
         if (version != null && version.length() > 0) {
             buf.append(":").append(version);
@@ -1433,10 +1515,15 @@ public final class URL implements Serializable {
         return buf.toString();
     }
 
+    // 只显示前面的信息
+    // host 是 域名地址
+    // 协议://username:password@host:port/path
     public String toServiceStringWithoutResolving() {
         return buildString(true, false, false, true);
     }
 
+    // host 是 IP
+    // 协议://username:password@host:port/path
     public String toServiceString() {
         return buildString(true, false, true, true);
     }
@@ -1446,10 +1533,12 @@ public final class URL implements Serializable {
         return getServiceInterface();
     }
 
+    // 获取接口名
     public String getServiceInterface() {
         return getParameter(Constants.INTERFACE_KEY, path);
     }
 
+    // 设置当前 URL 的接口名
     public URL setServiceInterface(String service) {
         return addParameter(Constants.INTERFACE_KEY, service);
     }
