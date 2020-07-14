@@ -34,33 +34,42 @@ public class ModuleConfig extends AbstractConfig {
     private static final long serialVersionUID = 5508512956753757169L;
 
     // module name
+    // 模块名称
     private String name;
 
     // module version
+    // 模块版本号
     private String version;
 
     // module owner
+    // 模块作者
     private String owner;
 
     // module's organization
+    // 模块部门
     private String organization;
 
     // registry centers
+    // 对应的注册中心集合
     private List<RegistryConfig> registries;
 
     // monitor center
+    // 监控中心集合
     private MonitorConfig monitor;
 
     // if it's default
+    // 是否默认
     private Boolean isDefault;
 
     public ModuleConfig() {
     }
 
+    // 初始化对象，设置模块名称
     public ModuleConfig(String name) {
         setName(name);
     }
 
+    // 模块名称是必须的，默认key是 module
     @Parameter(key = "module", required = true)
     public String getName() {
         return name;
@@ -74,6 +83,7 @@ public class ModuleConfig extends AbstractConfig {
         }
     }
 
+    // 获取模块版本号
     @Parameter(key = "module.version")
     public String getVersion() {
         return version;
@@ -101,6 +111,10 @@ public class ModuleConfig extends AbstractConfig {
         this.organization = organization;
     }
 
+    /**
+     * 获取注册中心配置，默认取第一个
+     * @return
+     */
     public RegistryConfig getRegistry() {
         return registries == null || registries.isEmpty() ? null : registries.get(0);
     }
