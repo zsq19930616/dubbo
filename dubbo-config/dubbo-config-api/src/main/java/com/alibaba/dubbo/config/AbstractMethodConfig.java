@@ -36,21 +36,27 @@ public abstract class AbstractMethodConfig extends AbstractConfig {
     private static final long serialVersionUID = 1L;
 
     // timeout for remote invocation in milliseconds
+    // 远程调用超时（毫秒）
     protected Integer timeout;
 
     // retry times
+    // 重试次数
     protected Integer retries;
 
     // max concurrent invocations
+    // 最大并发调用数
     protected Integer actives; // TODO 芋艿
 
     // load balance
+    // 负载均衡
     protected String loadbalance;
 
     // whether to async
+    // 是否异步
     protected Boolean async; // TODO 芋艿
 
     // whether to ack async-sent
+    // 是否确认异步发送
     protected Boolean sent; // TODO 芋艿
 
     /**
