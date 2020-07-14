@@ -34,33 +34,42 @@ public class MethodConfig extends AbstractMethodConfig {
     private static final long serialVersionUID = 884908855422675941L;
 
     // method name
+    // 方法名
     private String name;
 
     // stat
     private Integer stat; // TODO 芋艿
 
     // whether to retry
+    // 是否重试
     private Boolean retry;
 
     // if it's reliable
+    // 是否可靠
     private Boolean reliable; // TODO 芋艿
 
     // thread limits for method invocations
+    // 方法调用的线程限制
     private Integer executes; // TODO 芋艿
 
     // if it's deprecated
+    // 服务方法是否过时，此属性只在<dubbo:method>作为<dubbo:service>子标签时有效
     private Boolean deprecated;
 
     // whether to enable sticky
+    // 设置true 该接口上的所有方法使用同一个provider.如果需要更复杂的规则，请使用用路由
     private Boolean sticky; // TODO 芋艿
 
     // whether need to return
+    // 是否需要返回值
     private Boolean isReturn; // TODO 芋艿
 
     // callback instance when async-call is invoked
+    // 调用异步调用时的回调实例
     private Object oninvoke; // TODO 芋艿
 
     // callback method when async-call is invoked
+    // 调用异步调用时的回调方法
     private String oninvokeMethod; // TODO 芋艿
 
     // callback instance when async-call is returned
@@ -75,6 +84,7 @@ public class MethodConfig extends AbstractMethodConfig {
     // callback method when async-call has exception thrown
     private String onthrowMethod; // TODO 芋艿
 
+    // 方法参数配置集合
     private List<ArgumentConfig> arguments;
 
     @Parameter(excluded = true)
