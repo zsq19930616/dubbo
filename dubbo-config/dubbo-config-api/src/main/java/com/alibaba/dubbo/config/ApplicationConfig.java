@@ -28,7 +28,7 @@ import java.util.Map;
 
 /**
  * ApplicationConfig
- *
+ * <p>
  * 应用配置
  * 属性参见 http://dubbo.io/books/dubbo-user-book/references/xml/dubbo-application.html
  *
@@ -127,6 +127,11 @@ public class ApplicationConfig extends AbstractConfig {
         }
     }
 
+    /**
+     * 应用的版本号
+     *
+     * @return
+     */
     @Parameter(key = "application.version")
     public String getVersion() {
         return version;
@@ -167,6 +172,11 @@ public class ApplicationConfig extends AbstractConfig {
         return environment;
     }
 
+    /**
+     * 设置环境，仅支持 develop、test、product 这个几个环境.默认是 product
+     *
+     * @param environment
+     */
     public void setEnvironment(String environment) {
         checkName("environment", environment);
         if (environment != null) {
@@ -177,6 +187,11 @@ public class ApplicationConfig extends AbstractConfig {
         this.environment = environment;
     }
 
+    /**
+     * 获取注册中心配置项
+     *
+     * @return
+     */
     public RegistryConfig getRegistry() {
         return registries == null || registries.isEmpty() ? null : registries.get(0);
     }
@@ -196,6 +211,11 @@ public class ApplicationConfig extends AbstractConfig {
         this.registries = (List<RegistryConfig>) registries;
     }
 
+    /**
+     * 获取监控中心配置
+     *
+     * @return
+     */
     public MonitorConfig getMonitor() {
         return monitor;
     }

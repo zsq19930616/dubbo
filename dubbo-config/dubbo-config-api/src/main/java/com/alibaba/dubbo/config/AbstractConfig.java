@@ -37,31 +37,57 @@ import java.util.regex.Pattern;
 
 /**
  * Utility methods and public methods for parsing configuration
- *
+ *  配置类父类，封装公共方法和解析
  * @export
  */
 public abstract class AbstractConfig implements Serializable {
 
+    /**
+     * 日志
+     */
     protected static final Logger logger = LoggerFactory.getLogger(AbstractConfig.class);
 
     private static final long serialVersionUID = 4267533505537413570L;
 
     // ========== 属性值的格式校验，参见本类的 `#checkXXX` 方法 BEGIN ==========
-
+    /**
+     * 最大字符串长度
+     */
     private static final int MAX_LENGTH = 200;
 
+    /**
+     * 最大路径长度
+     */
     private static final int MAX_PATH_LENGTH = 200;
 
+    /**
+     * 正则校验 name
+     */
     private static final Pattern PATTERN_NAME = Pattern.compile("[\\-._0-9a-zA-Z]+");
 
+    /**
+     * 正则校验 多个名称
+     */
     private static final Pattern PATTERN_MULTI_NAME = Pattern.compile("[,\\-._0-9a-zA-Z]+");
 
+    /**
+     * 正则校验 方法名
+     */
     private static final Pattern PATTERN_METHOD_NAME = Pattern.compile("[a-zA-Z][0-9a-zA-Z]*");
 
+    /**
+     * 正则校验 路径
+     */
     private static final Pattern PATTERN_PATH = Pattern.compile("[/\\-$._0-9a-zA-Z]+");
 
+    /**
+     * 正则校验 名称包含符号
+     */
     private static final Pattern PATTERN_NAME_HAS_SYMBOL = Pattern.compile("[:*,/\\-._0-9a-zA-Z]+");
 
+    /**
+     * 正则校验 key
+     */
     private static final Pattern PATTERN_KEY = Pattern.compile("[*,\\-._0-9a-zA-Z]+");
 
     // ========== 属性值的格式校验，参见本类的 `#checkXXX` 方法 END ==========
@@ -83,6 +109,7 @@ public abstract class AbstractConfig implements Serializable {
     private static final String[] SUFFIXES = new String[]{"Config", "Bean"};
 
     static {
+        // 新老版本 key 映射关系
         legacyProperties.put("dubbo.protocol.name", "dubbo.service.protocol");
         legacyProperties.put("dubbo.protocol.host", "dubbo.service.server.host");
         legacyProperties.put("dubbo.protocol.port", "dubbo.service.server.port");
@@ -94,11 +121,13 @@ public abstract class AbstractConfig implements Serializable {
     }
 
     static {
+        // 添加钩子方法。程序结束时，释放资源
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
                 if (logger.isInfoEnabled()) {
                     logger.info("Run shutdown hook now.");
                 }
+                // 销毁所有配置
                 ProtocolConfig.destroyAll();
             }
         }, "DubboShutdownHook"));
@@ -106,6 +135,7 @@ public abstract class AbstractConfig implements Serializable {
 
     /**
      * 配置对象的编号
+     * 唯一标识
      */
     protected String id;
 
@@ -120,9 +150,11 @@ public abstract class AbstractConfig implements Serializable {
      */
     private static String convertLegacyValue(String key, String value) {
         if (value != null && value.length() > 0) {
+            // 最大重试次数，不包含当前调用。！！！
             if ("dubbo.service.max.retry.providers".equals(key)) {
                 return String.valueOf(Integer.parseInt(value) - 1);
             } else if ("dubbo.service.allow.no.provider".equals(key)) {
+                // 解析为 boolean，并转为 string
                 return String.valueOf(!Boolean.parseBoolean(value));
             }
         }
@@ -243,6 +275,11 @@ public abstract class AbstractConfig implements Serializable {
         return tag;
     }
 
+    /**
+     * 追加参数，不带前缀
+     * @param parameters
+     * @param config
+     */
     protected static void appendParameters(Map<String, String> parameters, Object config) {
         appendParameters(parameters, config, null);
     }
@@ -349,6 +386,11 @@ public abstract class AbstractConfig implements Serializable {
         }
     }
 
+    /**
+     * 追加属性，不带前缀
+     * @param parameters
+     * @param config
+     */
     protected static void appendAttributes(Map<Object, Object> parameters, Object config) {
         appendAttributes(parameters, config, null);
     }
@@ -447,6 +489,12 @@ public abstract class AbstractConfig implements Serializable {
         return value;
     }
 
+    /**
+     * 扩产检查
+     * @param type
+     * @param property
+     * @param value
+     */
     protected static void checkExtension(Class<?> type, String property, String value) {
         checkName(property, value);
         if (value != null && value.length() > 0
@@ -455,6 +503,12 @@ public abstract class AbstractConfig implements Serializable {
         }
     }
 
+    /**
+     * 多扩展检查
+     * @param type
+     * @param property
+     * @param value
+     */
     protected static void checkMultiExtension(Class<?> type, String property, String value) {
         checkMultiName(property, value);
         if (value != null && value.length() > 0) {
@@ -473,16 +527,26 @@ public abstract class AbstractConfig implements Serializable {
         }
     }
 
+    /**
+     * 检查长度
+     * @param property
+     * @param value
+     */
     protected static void checkLength(String property, String value) {
         checkProperty(property, value, MAX_LENGTH, null);
     }
 
+    /**
+     * 检查路径长度
+     * @param property
+     * @param value
+     */
     protected static void checkPathLength(String property, String value) {
         checkProperty(property, value, MAX_PATH_LENGTH, null);
     }
 
     /**
-     * 校验应用名称
+     * 校验name
      * @param property
      * @param value
      */
@@ -490,26 +554,55 @@ public abstract class AbstractConfig implements Serializable {
         checkProperty(property, value, MAX_LENGTH, PATTERN_NAME);
     }
 
+    /**
+     * 检查带符号名称
+     * @param property
+     * @param value
+     */
     protected static void checkNameHasSymbol(String property, String value) {
         checkProperty(property, value, MAX_LENGTH, PATTERN_NAME_HAS_SYMBOL);
     }
 
+    /**
+     * 检查 key
+     * @param property
+     * @param value
+     */
     protected static void checkKey(String property, String value) {
         checkProperty(property, value, MAX_LENGTH, PATTERN_KEY);
     }
 
+    /**
+     * 检查多名称
+     * @param property
+     * @param value
+     */
     protected static void checkMultiName(String property, String value) {
         checkProperty(property, value, MAX_LENGTH, PATTERN_MULTI_NAME);
     }
 
+    /**
+     * 检查路径
+     * @param property
+     * @param value
+     */
     protected static void checkPathName(String property, String value) {
         checkProperty(property, value, MAX_PATH_LENGTH, PATTERN_PATH);
     }
 
+    /**
+     * 检查方法名称
+     * @param property
+     * @param value
+     */
     protected static void checkMethodName(String property, String value) {
         checkProperty(property, value, MAX_LENGTH, PATTERN_METHOD_NAME);
     }
 
+    /**
+     * 检查参数名称
+     * @param parameters
+     */
     protected static void checkParameterName(Map<String, String> parameters) {
         if (parameters == null || parameters.size() == 0) {
             return;
@@ -520,6 +613,13 @@ public abstract class AbstractConfig implements Serializable {
         }
     }
 
+    /**
+     * 通用检查方法
+     * @param property
+     * @param value
+     * @param maxlength
+     * @param pattern
+     */
     protected static void checkProperty(String property, String value, int maxlength, Pattern pattern) {
         // value 没有值，直接结束方法
         if (value == null || value.length() == 0) {
@@ -541,6 +641,11 @@ public abstract class AbstractConfig implements Serializable {
         }
     }
 
+    /**
+     * 默认忽略ID
+     * 配置的唯一ID标识
+     * @return
+     */
     @Parameter(excluded = true)
     public String getId() {
         return id;
@@ -550,10 +655,16 @@ public abstract class AbstractConfig implements Serializable {
         this.id = id;
     }
 
+    /**
+     * 注解方式追加
+     * @param annotationClass
+     * @param annotation
+     */
     protected void appendAnnotation(Class<?> annotationClass, Object annotation) {
         // 获取注解类的方法
         Method[] methods = annotationClass.getMethods();
         for (Method method : methods) {
+            // 非 Object ，返回值不为 void，形参长度为 0 ，是public方法，非静态方法
             if (method.getDeclaringClass() != Object.class
                     && method.getReturnType() != void.class
                     && method.getParameterTypes().length == 0

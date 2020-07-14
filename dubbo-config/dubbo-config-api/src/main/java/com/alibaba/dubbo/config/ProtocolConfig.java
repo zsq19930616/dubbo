@@ -165,6 +165,8 @@ public class ProtocolConfig extends AbstractConfig {
     // TODO: 2017/8/30 to move this method somewhere else
     public static void destroyAll() {
         // 忽略，若已经销毁
+        // 预期值是 false，新值为 true，替换失败，已经销毁
+        // destroyed 默认值是 false，替换 为 true
         if (!destroyed.compareAndSet(false, true)) {
             return;
         }

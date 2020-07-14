@@ -217,6 +217,7 @@ public class ExtensionLoader<T> {
      */
     @SuppressWarnings("unchecked")
     public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) {
+        // 检查类型
         if (type == null)
             throw new IllegalArgumentException("Extension type == null");
         // 必须是接口
