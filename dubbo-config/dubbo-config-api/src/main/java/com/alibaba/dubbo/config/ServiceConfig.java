@@ -266,6 +266,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
      */
     public synchronized void export() {
         // 当 export 或者 delay 未配置，从 ProviderConfig 对象读取。
+        // 服务提供者，具体与spring的继承，暂未看代码
         if (provider != null) {
             if (export == null) {
                 export = provider.getExport();
@@ -477,19 +478,27 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
     private void doExportUrlsFor1Protocol(ProtocolConfig protocolConfig, List<URL> registryURLs) {
         // 协议名
         String name = protocolConfig.getName();
+        // 为空设置为 dubbo
         if (name == null || name.length() == 0) {
             name = "dubbo";
         }
 
         // 将 `side`，`dubbo`，`timestamp`，`pid` 参数，添加到 `map` 集合中。
         Map<String, String> map = new HashMap<String, String>();
+        // 这个是服务提供者
         map.put(Constants.SIDE_KEY, Constants.PROVIDER_SIDE);
+        // dubbo版本号
         map.put(Constants.DUBBO_VERSION_KEY, Version.getVersion());
+        // 注册时间
         map.put(Constants.TIMESTAMP_KEY, String.valueOf(System.currentTimeMillis()));
+        // 进程号
         if (ConfigUtils.getPid() > 0) {
+            // 添加进程号
             map.put(Constants.PID_KEY, String.valueOf(ConfigUtils.getPid()));
         }
         // 将各种配置对象，添加到 `map` 集合中。
+        // 优先级别：
+        // ServiceConfig > protocolConfig > provider > module > application
         appendParameters(map, application);
         appendParameters(map, module);
         appendParameters(map, provider, Constants.DEFAULT_KEY); // ProviderConfig ，为 ServiceConfig 的默认属性，因此添加 `default` 属性前缀。
