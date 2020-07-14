@@ -501,6 +501,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                 // 将 MethodConfig 对象，添加到 `map` 集合中。
                 appendParameters(map, method, method.getName());
                 // 当 配置了 `MethodConfig.retry = false` 时，强制禁用重试
+                // 也就是设置重试次数为 0 了。
                 String retryKey = method.getName() + ".retry";
                 if (map.containsKey(retryKey)) {
                     String retryValue = map.remove(retryKey);
@@ -518,6 +519,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                             // visit all methods
                             if (methods != null && methods.length > 0) {
                                 for (int i = 0; i < methods.length; i++) {
+                                    // 接口中的方法名
                                     String methodName = methods[i].getName();
                                     // target the method, and get its signature
                                     if (methodName.equals(method.getName())) { // 找到指定方法
