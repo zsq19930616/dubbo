@@ -46,48 +46,63 @@ public class ProviderConfig extends AbstractServiceConfig {
     // ======== protocol default values, it'll take effect when protocol's attributes are not set ========
 
     // service IP addresses (used when there are multiple network cards available)
+    // ip 地址
     private String host;
 
     // service port
+    // 端口
     private Integer port;
 
     // context path
+    // 应用上下文路径
     private String contextpath;
 
     // thread pool
+    // 线程池
     private String threadpool;
 
     // thread pool size (fixed size)
+    // 线程池大小
     private Integer threads; // TODO 芋艿
 
     // IO thread pool size (fixed size)
+    // io 线程池大小
     private Integer iothreads; // TODO 芋艿
 
     // thread pool queue length
+    // 池队列大小
     private Integer queues; // TODO 芋艿
 
     // max acceptable connections
+    // 最大可接受连接数
     private Integer accepts; // TODO 芋艿
 
     // protocol codec
+    // 协议编码器
     private String codec; // TODO 芋艿
 
     // charset
+    // 字符集
     private String charset;
 
     // payload max length
+    // 有效载荷最大长度
     private Integer payload;
 
     // buffer size
+    // 缓冲区大小
     private Integer buffer;
 
     // transporter
+    // 传输
     private String transporter; // TODO 芋艿
 
     // how information gets exchanged
+    // 如何交换信息
     private String exchanger; // TODO 芋艿
 
     // thread dispatching mode
+    // 线程调度模式
     private String dispatcher; // TODO 芋艿
 
     // networker

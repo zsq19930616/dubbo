@@ -74,7 +74,7 @@ public abstract class AbstractServiceConfig extends AbstractInterfaceConfig {
     // 访问日志
     protected String accesslog; // TODO 芋艿
     /**
-     * 注册中心配置数组
+     * 协议配置集合
      */
     protected List<ProtocolConfig> protocols;
     // max allowed execute times
