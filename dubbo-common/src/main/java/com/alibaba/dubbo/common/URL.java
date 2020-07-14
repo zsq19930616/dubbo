@@ -315,6 +315,11 @@ public final class URL implements Serializable {
         return new URL(protocol, username, password, host, port, path, parameters);
     }
 
+    /**
+     * 编码
+     * @param value
+     * @return
+     */
     public static String encode(String value) {
         if (value == null || value.length() == 0) {
             return "";
@@ -326,6 +331,11 @@ public final class URL implements Serializable {
         }
     }
 
+    /**
+     * 解码
+     * @param value
+     * @return
+     */
     public static String decode(String value) {
         if (value == null || value.length() == 0) {
             return "";
@@ -337,43 +347,54 @@ public final class URL implements Serializable {
         }
     }
 
+    // 获取协议
     public String getProtocol() {
         return protocol;
     }
 
+    // 设置协议，生成新的 URL 对象
     public URL setProtocol(String protocol) {
         return new URL(protocol, username, password, host, port, path, getParameters());
     }
 
+    // 获取用户名
     public String getUsername() {
         return username;
     }
 
+    // 设置用户名 生成新的 URL 对象
     public URL setUsername(String username) {
         return new URL(protocol, username, password, host, port, path, getParameters());
     }
 
+    // 获取密码
     public String getPassword() {
         return password;
     }
 
+    // 设置密码，生成新的 URL 对象
     public URL setPassword(String password) {
         return new URL(protocol, username, password, host, port, path, getParameters());
     }
 
+    // 获取授权信息
     public String getAuthority() {
+        // 没有用户名密码，返回 null
         if ((username == null || username.length() == 0)
                 && (password == null || password.length() == 0)) {
             return null;
         }
+        // 返回 username:password
         return (username == null ? "" : username)
                 + ":" + (password == null ? "" : password);
     }
 
+    // 获取 主机
     public String getHost() {
         return host;
     }
 
+    // 设置 主机地址，返回 新的 URL 对象
     public URL setHost(String host) {
         return new URL(protocol, username, password, host, port, path, getParameters());
     }
@@ -386,6 +407,7 @@ public final class URL implements Serializable {
      *
      * @return ip in string format
      */
+    // 获取 ip 地址
     public String getIp() {
         if (ip == null) {
             ip = NetUtils.getIpByHost(host);
@@ -393,44 +415,65 @@ public final class URL implements Serializable {
         return ip;
     }
 
+    // 获取端口
     public int getPort() {
         return port;
     }
 
+    // 设置端口，生成新的 URL 对象
     public URL setPort(int port) {
         return new URL(protocol, username, password, host, port, path, getParameters());
     }
 
+    // 获取端口，没有指定返回默认端口
     public int getPort(int defaultPort) {
         return port <= 0 ? defaultPort : port;
     }
 
+    // 获取 address ===>  host:port
     public String getAddress() {
         return port <= 0 ? host : host + ":" + port;
     }
 
+    // 设置地址信息
     public URL setAddress(String address) {
+        // 获取 :
         int i = address.lastIndexOf(':');
+        // 主机
         String host;
+        // 端口默认是 当前对象的端口
         int port = this.port;
         if (i >= 0) {
+            // 冒号之前的是 主机
             host = address.substring(0, i);
+            // 冒号之后的是 端口
             port = Integer.parseInt(address.substring(i + 1));
         } else {
+            // 没有冒号，都是 主机
             host = address;
         }
+        // 生成 URL 对象
         return new URL(protocol, username, password, host, port, path, getParameters());
     }
 
+    // 备份地址
     public String getBackupAddress() {
         return getBackupAddress(0);
     }
 
+    // 获取指定端口的备份地址，咋来的呢？
     public String getBackupAddress(int defaultPort) {
+        // getAddress() ===> host:port
+        // appendDefaultPort() ===> 返回port不为0的address  host:port
         StringBuilder address = new StringBuilder(appendDefaultPort(getAddress(), defaultPort));
+        // 获取 parameter  // key:backup
+        // 设置的备份地址！！！  有备胎，可以的。
         String[] backups = getParameter(Constants.BACKUP_KEY, new String[0]);
+        // 拿到了值
         if (backups != null && backups.length > 0) {
+            // 遍历
             for (String backup : backups) {
+                // 拼接到 address 后面。
                 address.append(",");
                 address.append(appendDefaultPort(backup, defaultPort));
             }
@@ -438,11 +481,15 @@ public final class URL implements Serializable {
         return address.toString();
     }
 
+    // 多个 备胎 url 集合
     public List<URL> getBackupUrls() {
         List<URL> urls = new ArrayList<URL>();
+        // 添加当前的url
         urls.add(this);
+        // 获取备份地址
         String[] backups = getParameter(Constants.BACKUP_KEY, new String[0]);
         if (backups != null && backups.length > 0) {
+            // 备胎多就是好啊。可选择性多，随时替换下一个！！！
             for (String backup : backups) {
                 urls.add(this.setAddress(backup));
             }
@@ -451,26 +498,35 @@ public final class URL implements Serializable {
     }
 
     private String appendDefaultPort(String address, int defaultPort) {
+        // address 不为空，默认端口大于0
         if (address != null && address.length() > 0
                 && defaultPort > 0) {
+            // 检测 address 是否有 :
             int i = address.indexOf(':');
+            // 没有
             if (i < 0) {
+                // 那就拼接返回了
                 return address + ":" + defaultPort;
             } else if (Integer.parseInt(address.substring(i + 1)) == 0) {
+                // 截取端口为 0，设置 host:defaultPort
                 return address.substring(0, i + 1) + defaultPort;
             }
         }
+        // 最终返回一个 host:端口不为0的通信地址
         return address;
     }
 
+    // 获取 应用
     public String getPath() {
         return path;
     }
 
+    // 设置应用
     public URL setPath(String path) {
         return new URL(protocol, username, password, host, port, path, getParameters());
     }
 
+    // 获取绝对接口路径，其实就是添加一个 / 开头而已
     public String getAbsolutePath() {
         if (path != null && !path.startsWith("/")) {
             return "/" + path;
@@ -478,26 +534,33 @@ public final class URL implements Serializable {
         return path;
     }
 
+    // 参数集合
     public Map<String, String> getParameters() {
         return parameters;
     }
 
+    // 指定参数解码
     public String getParameterAndDecoded(String key) {
         return getParameterAndDecoded(key, null);
     }
 
+    // 指定参数解码，没有值给个默认值
     public String getParameterAndDecoded(String key, String defaultValue) {
         return decode(getParameter(key, defaultValue));
     }
 
     public String getParameter(String key) {
+        // 获取value
         String value = parameters.get(key);
+        // 为空，坚持一下，加个前缀获取一下了
         if (value == null || value.length() == 0) {
+            // 再次获取 default.backup  脸皮真厚。
             value = parameters.get(Constants.DEFAULT_KEY_PREFIX + key);
         }
         return value;
     }
 
+    // 获取参数，没有值给个默认值
     public String getParameter(String key, String defaultValue) {
         String value = getParameter(key);
         if (value == null || value.length() == 0) {
@@ -508,12 +571,15 @@ public final class URL implements Serializable {
 
     public String[] getParameter(String key, String[] defaultValue) {
         String value = getParameter(key);
+        // 没有获取到，返回默认值
         if (value == null || value.length() == 0) {
             return defaultValue;
         }
+        // 正则拆分。  逗号分割的
         return Constants.COMMA_SPLIT_PATTERN.split(value);
     }
 
+    // 线程可见的属性，用的时候在初始化
     private Map<String, Number> getNumbers() {
         if (numbers == null) { // concurrent initialization is tolerant
             numbers = new ConcurrentHashMap<String, Number>();
@@ -521,6 +587,7 @@ public final class URL implements Serializable {
         return numbers;
     }
 
+    // 所有的url，用的时候初始化
     private Map<String, URL> getUrls() {
         if (urls == null) { // concurrent initialization is tolerant
             urls = new ConcurrentHashMap<String, URL>();
@@ -528,34 +595,54 @@ public final class URL implements Serializable {
         return urls;
     }
 
+    // 通过 key 获取指定的 URL
     public URL getUrlParameter(String key) {
+        // map 中获取
         URL u = getUrls().get(key);
+        // 找到了
         if (u != null) {
+            // 返回
             return u;
         }
+        // 没找到，那就解码，再找一下
         String value = getParameterAndDecoded(key);
+        // 还没有
         if (value == null || value.length() == 0) {
+            // 返回 null
             return null;
         }
+        // 有，那就编码，能看懂返回去。
         u = URL.valueOf(value);
+        // 把能看懂的添加到集合中，那么下次获取的时候就不用编码了。优秀！
         getUrls().put(key, u);
         return u;
     }
 
+    // 获取 值为 double 的
     public double getParameter(String key, double defaultValue) {
+        // Number 是 父类
         Number n = getNumbers().get(key);
+        // 找到了
         if (n != null) {
+            // 转为 double 返回
             return n.doubleValue();
         }
+        // 没有，厚脸皮再来一次， 加个前缀搞一把， 再次获取 ，说不定有 default 配置
         String value = getParameter(key);
+        // 还没有哦
         if (value == null || value.length() == 0) {
+            // 返回默认值
             return defaultValue;
         }
+        // 找到了就转换成 double。
         double d = Double.parseDouble(value);
+        // 添加到 集合中。下一次，就不用找了。
         getNumbers().put(key, d);
+        // 返回
         return d;
     }
 
+    // 骚操作都一样。重载的方法
     public float getParameter(String key, float defaultValue) {
         Number n = getNumbers().get(key);
         if (n != null) {
@@ -570,6 +657,7 @@ public final class URL implements Serializable {
         return f;
     }
 
+    // 骚操作都一样。重载的方法
     public long getParameter(String key, long defaultValue) {
         Number n = getNumbers().get(key);
         if (n != null) {
@@ -584,6 +672,7 @@ public final class URL implements Serializable {
         return l;
     }
 
+    // 骚操作都一样。重载的方法
     public int getParameter(String key, int defaultValue) {
         Number n = getNumbers().get(key);
         if (n != null) {
@@ -598,6 +687,7 @@ public final class URL implements Serializable {
         return i;
     }
 
+    // 骚操作都一样。重载的方法
     public short getParameter(String key, short defaultValue) {
         Number n = getNumbers().get(key);
         if (n != null) {
@@ -612,6 +702,7 @@ public final class URL implements Serializable {
         return s;
     }
 
+    // 骚操作都一样。重载的方法
     public byte getParameter(String key, byte defaultValue) {
         Number n = getNumbers().get(key);
         if (n != null) {
@@ -626,17 +717,23 @@ public final class URL implements Serializable {
         return b;
     }
 
+    // 提前出错，积极一些。
     public float getPositiveParameter(String key, float defaultValue) {
+        // 默认值不合法
         if (defaultValue <= 0) {
             throw new IllegalArgumentException("defaultValue <= 0");
         }
+        // 获取
         float value = getParameter(key, defaultValue);
+        // 小于0
         if (value <= 0) {
+            // 返回默认值
             return defaultValue;
         }
         return value;
     }
 
+    // 重载方法：提前出错，积极一些。
     public double getPositiveParameter(String key, double defaultValue) {
         if (defaultValue <= 0) {
             throw new IllegalArgumentException("defaultValue <= 0");
@@ -648,6 +745,7 @@ public final class URL implements Serializable {
         return value;
     }
 
+    // 重载方法：提前出错，积极一些。
     public long getPositiveParameter(String key, long defaultValue) {
         if (defaultValue <= 0) {
             throw new IllegalArgumentException("defaultValue <= 0");
@@ -659,6 +757,7 @@ public final class URL implements Serializable {
         return value;
     }
 
+    // 重载方法：提前出错，积极一些。
     public int getPositiveParameter(String key, int defaultValue) {
         if (defaultValue <= 0) {
             throw new IllegalArgumentException("defaultValue <= 0");
@@ -670,6 +769,7 @@ public final class URL implements Serializable {
         return value;
     }
 
+    // 重载方法：提前出错，积极一些。
     public short getPositiveParameter(String key, short defaultValue) {
         if (defaultValue <= 0) {
             throw new IllegalArgumentException("defaultValue <= 0");
@@ -681,6 +781,7 @@ public final class URL implements Serializable {
         return value;
     }
 
+    // 重载方法：提前出错，积极一些。
     public byte getPositiveParameter(String key, byte defaultValue) {
         if (defaultValue <= 0) {
             throw new IllegalArgumentException("defaultValue <= 0");
@@ -692,6 +793,7 @@ public final class URL implements Serializable {
         return value;
     }
 
+    // 重载方法：提前出错，积极一些。
     public char getParameter(String key, char defaultValue) {
         String value = getParameter(key);
         if (value == null || value.length() == 0) {
@@ -700,6 +802,7 @@ public final class URL implements Serializable {
         return value.charAt(0);
     }
 
+    // 重载方法：提前出错，积极一些。
     public boolean getParameter(String key, boolean defaultValue) {
         String value = getParameter(key);
         if (value == null || value.length() == 0) {
@@ -708,27 +811,39 @@ public final class URL implements Serializable {
         return Boolean.parseBoolean(value);
     }
 
+    // 判断是否有这个key
     public boolean hasParameter(String key) {
+        // 获取值
         String value = getParameter(key);
+        // 值不为空代表有
         return value != null && value.length() > 0;
     }
 
+    // 方法+key
+    // 获取方法参数并且解码
     public String getMethodParameterAndDecoded(String method, String key) {
         return URL.decode(getMethodParameter(method, key));
     }
 
+    // 获取方法参数，没有拿到给个默认值，并且解码
     public String getMethodParameterAndDecoded(String method, String key, String defaultValue) {
         return URL.decode(getMethodParameter(method, key, defaultValue));
     }
 
+    // 真实的方法来了，获取方法参数
     public String getMethodParameter(String method, String key) {
+        // key 是 method.key
+        // 获取值
         String value = parameters.get(method + "." + key);
+        // 没有
         if (value == null || value.length() == 0) {
+            // 再次获取，看下有没有 default 设置的值
             return getParameter(key);
         }
         return value;
     }
 
+    // 重载方法，找不到就给个默认值
     public String getMethodParameter(String method, String key, String defaultValue) {
         String value = getMethodParameter(method, key);
         if (value == null || value.length() == 0) {
@@ -737,6 +852,10 @@ public final class URL implements Serializable {
         return value;
     }
 
+    // 方法参数也这样，就这个干就完了。
+    // 有就返回，
+    // 没有再次获取，还没有返回默认值
+    // 解析成对应的类型，缓存起来，下次就直接找到了
     public double getMethodParameter(String method, String key, double defaultValue) {
         String methodKey = method + "." + key;
         Number n = getNumbers().get(methodKey);
@@ -827,6 +946,7 @@ public final class URL implements Serializable {
         return b;
     }
 
+    // 默认值合法检测的
     public double getMethodPositiveParameter(String method, String key, double defaultValue) {
         if (defaultValue <= 0) {
             throw new IllegalArgumentException("defaultValue <= 0");
@@ -909,9 +1029,13 @@ public final class URL implements Serializable {
         return Boolean.parseBoolean(value);
     }
 
+    // 判断方法是否有这个参数
     public boolean hasMethodParameter(String method, String key) {
+        // 方法名为空
         if (method == null) {
+            // 后缀弄好
             String suffix = "." + key;
+            // 遍历集合，有这个后缀的就代表有。！！！
             for (String fullKey : parameters.keySet()) {
                 if (fullKey.endsWith(suffix)) {
                     return true;
@@ -919,8 +1043,11 @@ public final class URL implements Serializable {
             }
             return false;
         }
+        // key 为空
         if (key == null) {
+            // 前缀拼好
             String prefix = method + ".";
+            // 有这个开头的就代表有！！！
             for (String fullKey : parameters.keySet()) {
                 if (fullKey.startsWith(prefix)) {
                     return true;
@@ -928,7 +1055,9 @@ public final class URL implements Serializable {
             }
             return false;
         }
+        // 没有特殊情况，正常取值
         String value = getMethodParameter(method, key);
+        // 验证值是否为空
         return value != null && value.length() > 0;
     }
 
