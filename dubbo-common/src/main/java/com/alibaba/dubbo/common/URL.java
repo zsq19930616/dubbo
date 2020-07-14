@@ -68,7 +68,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * 格式：protocol://username:password@host:port/path?key=value&key=value
  * 所有配置最终都将转换为 URL 表示，并由服务提供方生成，经注册中心传递给消费方，各属性对应 URL 的参数，参见配置项一览表中的 "对应URL参数" 列。
  * 来自 <a href="https://dubbo.gitbooks.io/dubbo-user-book/references/xml/introduction.html">schema 配置参考手册</>
- *
+ * 格式：protocol://username:password@host:port/path?key=value&key=value
+ * 示例：dubbo://192.168.3.17:20880/com.alibaba.dubbo.demo.DemoService?anyhost=true&application=demo-provider&default.delay=-1&default.retries=0&default.service.filter=demoFilter&delay=-1&dubbo=2.0.0&generic=false&interface=com.alibaba.dubbo.demo.DemoService&methods=sayHello&pid=19031&side=provider&timestamp=1519651641799
  * @see java.net.URL
  * @see java.net.URI
  */
@@ -191,7 +192,7 @@ public final class URL implements Serializable {
 
     /**
      * Parse url string
-     *
+     * 解析字符串 url为 URL
      * @param url URL string
      * @return URL instance
      * @see URL
@@ -200,66 +201,117 @@ public final class URL implements Serializable {
         if (url == null || (url = url.trim()).length() == 0) {
             throw new IllegalArgumentException("url == null");
         }
+        // 协议
         String protocol = null;
+        // 用户名
         String username = null;
+        // 密码
         String password = null;
+        // 地址
         String host = null;
+        // 端口
         int port = 0;
+        // 路径
         String path = null;
         Map<String, String> parameters = null;
-        int i = url.indexOf("?"); // seperator between body and parameters 
+        // ? 参数解析开始
+        // 获取 ?位置
+        int i = url.indexOf("?"); // seperator between body and parameters
+        // 有参数
         if (i >= 0) {
+            // 参数数组
             String[] parts = url.substring(i + 1).split("\\&");
+            // 转为 map
             parameters = new HashMap<String, String>();
             for (String part : parts) {
+                // key = value
                 part = part.trim();
+                // key 长度大于0
                 if (part.length() > 0) {
+                    // 获取 = 的位置
                     int j = part.indexOf('=');
+                    // 有等号
                     if (j >= 0) {
+                        // 拆分放入map中
                         parameters.put(part.substring(0, j), part.substring(j + 1));
                     } else {
+                        // 没有，设置为一样的值，放入map中
                         parameters.put(part, part);
                     }
                 }
             }
+            // ? 参数处理完毕，设置url
             url = url.substring(0, i);
         }
+        // ? 参数解析结束
+        // 获取协议名称
+        // 协议解析开始
         i = url.indexOf("://");
+        // 不可为空！
         if (i >= 0) {
+            // 没有协议，抛出异常.意思就是 :// 不能在字符串的最开头。
             if (i == 0) throw new IllegalStateException("url missing protocol: \"" + url + "\"");
+            // 设置协议
             protocol = url.substring(0, i);
+            // 设置url  "://" 的长度
             url = url.substring(i + 3);
         } else {
             // case: file:/path/to/file.txt
             i = url.indexOf(":/");
             if (i >= 0) {
+                // 同理 :/ 不能在字符串的开始位置，第一个位置代表没有协议喽
                 if (i == 0) throw new IllegalStateException("url missing protocol: \"" + url + "\"");
+                // 获取协议名称
                 protocol = url.substring(0, i);
+                // 设置url
                 url = url.substring(i + 1);
             }
         }
-
+        // 协议解析完毕
+        // 解析path开始
+        // 服务名称。一般一个应用就是一个服务，dubbo，接口就是服务。
         i = url.indexOf("/");
         if (i >= 0) {
             path = url.substring(i + 1);
+            // 设置url。 **/path?
+            // url = **
             url = url.substring(0, i);
         }
+        // 解析path结束
+        // username:password@host:port
+        // 解析用户名密码
         i = url.indexOf("@");
         if (i >= 0) {
+            // 获取用户名
             username = url.substring(0, i);
+            // 看看有么有 : 咯
             int j = username.indexOf(":");
+            // 有
             if (j >= 0) {
+                // 设置密码
                 password = username.substring(j + 1);
+                // 设置用户名
                 username = username.substring(0, j);
             }
+            // 设置剩下的玩意
+            // host:port
             url = url.substring(i + 1);
         }
+        // 解析用户名密码完毕
+        // 解析地址和端口开始
+        // 判断是否有 :
         i = url.indexOf(":");
+        // 有
         if (i >= 0 && i < url.length() - 1) {
+            // 端口肯定是 int 嘞
             port = Integer.parseInt(url.substring(i + 1));
+            // 设置url
+            // url = address
             url = url.substring(0, i);
         }
+        // 解析地址和端口结束
         if (url.length() > 0) host = url;
+        // 生成 URL 对象 /(ㄒoㄒ)/~~
         return new URL(protocol, username, password, host, port, path, parameters);
     }
 
