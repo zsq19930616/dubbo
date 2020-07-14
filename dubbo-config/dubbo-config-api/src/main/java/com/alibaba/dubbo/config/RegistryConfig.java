@@ -24,7 +24,7 @@ import java.util.Map;
 
 /**
  * RegistryConfig
- *
+ * <p>
  * 注册中心配置。
  * 属性参见 http://dubbo.io/books/dubbo-user-book/references/xml/dubbo-registry.html
  *
@@ -32,74 +32,100 @@ import java.util.Map;
  */
 public class RegistryConfig extends AbstractConfig {
 
+    /**
+     * 没有可用的注册中心
+     */
     public static final String NO_AVAILABLE = "N/A";
     private static final long serialVersionUID = 5508512956753757169L;
 
     // register center address
+    // 注册中心地址
     private String address;
 
     // username to login register center
+    // 注册中心用户名称
     private String username;
 
     // password to login register center
+    // 注册中心用户密码
     private String password;
 
     // default port for register center
+    // 注册中心端口
     private Integer port;
 
     // protocol for register center
+    // 注册中心协议
     private String protocol; // TODO 芋艿
 
     // client impl
+    // 传输通道
     private String transporter; // TODO 芋艿
 
+    // 服务端
     private String server; // TODO 芋艿
 
+    // 客户端
     private String client; // TODO 芋艿
 
+    // 集群
     private String cluster; // TODO 芋艿
 
+    // 分组
     private String group; // TODO 芋艿
 
+    // 版本号
     private String version; // TODO 芋艿
 
     // request timeout in milliseconds for register center
+    // 超时时间
     private Integer timeout;
 
     // session timeout in milliseconds for register center
+    // session 超时时间
     private Integer session;
 
     // file for saving register center dynamic list
+    // 文件存储路径
     private String file;
 
     // wait time before stop
+    // 等待时间
     private Integer wait;
 
     // whether to check if register center is available when boot up
+    // 是否检查服务可用
     private Boolean check;
 
     // whether to allow dynamic service to register on the register center
+    // 是否动态注册服务
     private Boolean dynamic;
 
     // whether to export service on the register center
     private Boolean register;
 
     // whether allow to subscribe service on the register center
+    // 是否动态订阅服务
     private Boolean subscribe;
 
     // customized parameters
+    // 定制参数
     private Map<String, String> parameters;
 
     // if it's default
     private Boolean isDefault;
 
+    // 无参构造器
     public RegistryConfig() {
     }
 
+    // 设置地址
+    // address ===> host:port
     public RegistryConfig(String address) {
         setAddress(address);
     }
 
+    // 销毁所有注册中心服务
     public static void destroyAll() {
         AbstractRegistryFactory.destroyAll();
     }
@@ -113,6 +139,7 @@ public class RegistryConfig extends AbstractConfig {
         return protocol;
     }
 
+    // 设置协议
     public void setProtocol(String protocol) {
         checkName("protocol", protocol);
         this.protocol = protocol;
