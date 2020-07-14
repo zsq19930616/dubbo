@@ -46,15 +46,19 @@ public class ProtocolConfig extends AbstractConfig {
     private static final long serialVersionUID = 6913423882496634749L;
 
     // protocol name
+    // 协议名称
     private String name;
 
     // service IP address (when there are multiple network cards available)
+    // host 域名或者ip
     private String host;
 
     // service port
+    // 端口
     private Integer port;
 
     // context path
+    // 上下文路径
     private String contextpath;
 
     /**
@@ -66,97 +70,125 @@ public class ProtocolConfig extends AbstractConfig {
      * 线程数 {@link com.alibaba.dubbo.common.threadpool.support.fixed.FixedThreadPool}
      */
     // thread pool size (fixed size)
+    // 线程池大小
     private Integer threads;
 
     // IO thread pool size (fixed size)
+    // io 线程数
     private Integer iothreads;
     /**
      * 队列数
      */
     // thread pool's queue length
+    // 队列
     private Integer queues;
 
     // max acceptable connections
+    // 最大连接数
     private Integer accepts;
 
     // protocol codec
+    // 编解码器
     private String codec;
 
     // serialization
+    // 序列化
     private String serialization;
 
     // charset
+    // 字符集
     private String charset;
 
     // payload max length
+    // 最大负载
     private Integer payload;
 
     // buffer size
+    // 缓冲区大小
     private Integer buffer;
 
     // heartbeat interval
+    // 心跳间隔
     private Integer heartbeat;
 
     // access log
+    // 访问日志
     private String accesslog;
 
     // transfort
+    // 传输类型
     private String transporter;
 
     // how information is exchanged
+    // 如何交换信息
     private String exchanger;
 
     // thread dispatch mode
+    // 线程调度模式
     private String dispatcher;
 
     // networker
     private String networker; // TODO ，芋艿
 
     // sever impl
+    // 服务提供者
     private String server;
 
     // client impl
+    // 客户端
     private String client;
 
     // supported telnet commands, separated with comma.
+    // telnet命令
     private String telnet;
 
     // command line prompt
+    // 命令行提示
     private String prompt; // TODO ，芋艿
 
     // status check
+    // 状态检查
     private String status; // TODO ，芋艿
 
     // whether to register
+    // 是否注册
     private Boolean register;
 
     // parameters
     // 是否长连接
     // TODO add this to provider config
+    // 是否长连接
     private Boolean keepAlive;
 
     // TODO add this to provider config
+    // 优化器
     private String optimizer;
 
+    // 扩展
     private String extension;
 
     // parameters
+    // 参数
     private Map<String, String> parameters;
 
     // if it's default
+    // 是否默认
     private Boolean isDefault;
     /**
      * 是否已经销毁
+     * 多线程，cas类保证原子性
      */
     private static final AtomicBoolean destroyed = new AtomicBoolean(false);
 
     public ProtocolConfig() {
     }
 
+    // 初始化带协议名称
     public ProtocolConfig(String name) {
         setName(name);
     }
 
+    // 协议及端口
     public ProtocolConfig(String name, int port) {
         setName(name);
         setPort(port);
