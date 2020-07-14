@@ -74,70 +74,95 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
     protected String stub; // TODO 芋艿
 
     // service monitor
+    // 监控配置
     protected MonitorConfig monitor;
 
     // proxy type
+    // 代理类型
     protected String proxy; // TODO 芋艿
 
     // cluster type
+    // 集群
     protected String cluster;
 
     // filter
+    // 过滤器
     protected String filter;
 
     // listener
+    // 监听器
     protected String listener;
 
     // owner
+    // 作者
     protected String owner;
 
     // connection limits, 0 means shared connection, otherwise it defines the connections delegated to the
     // current service
+    // 链接数
     protected Integer connections;
 
     // layer
+    // 层
     protected String layer; // TODO 芋艿
 
     // application info
+    // 应用信息
     protected ApplicationConfig application;
 
     // module info
+    // 模块信息
     protected ModuleConfig module;
 
     // registry centers
+    // 注册中心集合
     protected List<RegistryConfig> registries;
 
     // connection events
+    // 连接时
     protected String onconnect; // TODO 芋艿
 
     // disconnection events
+    // 断开连接时
     protected String ondisconnect; // TODO 芋艿
 
     // callback limits
+    // 回调次数限制
     private Integer callbacks;
 
     // the scope for referring/exporting a service, if it's local, it means searching in current JVM only.
+    // 作用域
     private String scope; // TODO 芋艿
 
     /**
      * 校验 RegistryConfig 配置数组。
      * 实际上，该方法会初始化 RegistryConfig 的配置属性。
      */
+    // 校验注册中心
     protected void checkRegistry() {
         // 当 RegistryConfig 对象数组为空时，若有 `dubbo.registry.address` 配置，进行创建。
         // for backward compatibility 向后兼容
+        // 当前接口中没有注册中心信息
         if (registries == null || registries.isEmpty()) {
+            // 获取到 address
             String address = ConfigUtils.getProperty("dubbo.registry.address");
+            // address 不为空
             if (address != null && address.length() > 0) {
+                // 初始化注册中心集合
                 registries = new ArrayList<RegistryConfig>();
+                // 按照指定规则 | 拆分
                 String[] as = address.split("\\s*[|]+\\s*");
                 for (String a : as) {
+                    // 创建 注册中心配置类
                     RegistryConfig registryConfig = new RegistryConfig();
                     registryConfig.setAddress(a);
                     registries.add(registryConfig);
                 }
             }
         }
+        // 注册完后还为空，抛出异常
+        // 友好提示：要么没有消费者，要么没有提供者，哪个机器，哪个dubbo版本。然后去检查自己的spring配置。
+        // 如果你想注销，那就设置 注册中心配置为 N/A
         if ((registries == null || registries.isEmpty())) {
             throw new IllegalStateException((getClass().getSimpleName().startsWith("Reference")
                     ? "No such any registry to refer service in consumer "
@@ -149,6 +174,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
         }
         // 读取环境变量和 properties 配置到 RegistryConfig 对象数组。
         for (RegistryConfig registryConfig : registries) {
+            // 把配置信息依次赋值 - 覆盖旧值
             appendProperties(registryConfig);
         }
     }
@@ -161,12 +187,18 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
     protected void checkApplication() {
         // 当 ApplicationConfig 对象为空时，若有 `dubbo.application.name` 配置，进行创建。
         // for backward compatibility 向后兼容
+        // 应用为空
         if (application == null) {
+            // 获取应用名
             String applicationName = ConfigUtils.getProperty("dubbo.application.name");
+            // 不为空
             if (applicationName != null && applicationName.length() > 0) {
+                // 创建配置
                 application = new ApplicationConfig();
             }
         }
+        // 没有配置应用信息，抛出异常
+        // 没有应用配置，请在你的spring xml配置文件中配置应用信息
         if (application == null) {
             throw new IllegalStateException(
                     "No such application config! Please add <dubbo:application name=\"...\" /> to your spring config.");
@@ -175,6 +207,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
         appendProperties(application);
 
         // 初始化优雅停机的超时时长，参见 http://dubbo.io/books/dubbo-user-book/demos/graceful-shutdown.html 文档。
+        // 优雅的等待时间设置。
         String wait = ConfigUtils.getProperty(Constants.SHUTDOWN_WAIT_KEY);
         if (wait != null && wait.trim().length() > 0) {
             System.setProperty(Constants.SHUTDOWN_WAIT_KEY, wait.trim());
@@ -201,9 +234,11 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
             for (RegistryConfig config : registries) {
                 // 获得注册中心的地址
                 String address = config.getAddress();
+                // 为空，那就全网暴露吧
                 if (address == null || address.length() == 0) {
                     address = Constants.ANYHOST_VALUE;
                 }
+                // 获取启动参数配置的地址
                 String sysaddress = System.getProperty("dubbo.registry.address"); // 从启动参数读取
                 if (sysaddress != null && sysaddress.length() > 0) {
                     address = sysaddress;
@@ -219,11 +254,13 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                     map.put("path", RegistryService.class.getName());
                     map.put("dubbo", Version.getVersion());
                     map.put(Constants.TIMESTAMP_KEY, String.valueOf(System.currentTimeMillis()));
+                    // 进程号,也就是当前 jvm 的进程号
                     if (ConfigUtils.getPid() > 0) {
                         map.put(Constants.PID_KEY, String.valueOf(ConfigUtils.getPid()));
                     }
                     // 若不存在 `protocol` 参数，默认 "dubbo" 添加到 `map` 集合中。
                     if (!map.containsKey("protocol")) {
+                        // remote 看下有没有了
                         if (ExtensionLoader.getExtensionLoader(RegistryFactory.class).hasExtension("remote")) { // "remote"
                             map.put("protocol", "remote");
                         } else {
@@ -258,20 +295,26 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
     protected URL loadMonitor(URL registryURL) {
         // 从 属性配置 中加载配置到 MonitorConfig 对象。
         if (monitor == null) {
+            // 获取监控中心地址
             String monitorAddress = ConfigUtils.getProperty("dubbo.monitor.address");
+            // 获取监控中心协议
             String monitorProtocol = ConfigUtils.getProperty("dubbo.monitor.protocol");
+            // 都灭有，那就灭有了
             if ((monitorAddress == null || monitorAddress.length() == 0) && (monitorProtocol == null || monitorProtocol.length() == 0)) {
                 return null;
             }
-
+            // 创建个监控中心配置
             monitor = new MonitorConfig();
+            // 地址不为空，设置监控中心地址
             if (monitorAddress != null && monitorAddress.length() > 0) {
                 monitor.setAddress(monitorAddress);
             }
+            // 协议不为空，设置监控中心协议
             if (monitorProtocol != null && monitorProtocol.length() > 0) {
                 monitor.setProtocol(monitorProtocol);
             }
         }
+        // 追加配置
         appendProperties(monitor);
         // 添加 `interface` `dubbo` `timestamp` `pid` 到 `map` 集合中
         Map<String, String> map = new HashMap<String, String>();
@@ -286,6 +329,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
         // 获得地址
         String address = monitor.getAddress();
         String sysaddress = System.getProperty("dubbo.monitor.address");
+        // 环境变量配置优先于代码配置
         if (sysaddress != null && sysaddress.length() > 0) {
             address = sysaddress;
         }

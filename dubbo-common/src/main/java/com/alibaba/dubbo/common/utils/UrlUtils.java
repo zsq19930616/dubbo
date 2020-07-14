@@ -51,6 +51,7 @@ public class UrlUtils {
             url = address;
         } else { // 第二种
             String[] addresses = Constants.COMMA_SPLIT_PATTERN.split(address); // 按照 逗号 拆分
+            // 第一个是主地址，后面的都是备胎
             url = addresses[0];
             if (addresses.length > 1) {
                 StringBuilder backup = new StringBuilder();
@@ -66,14 +67,20 @@ public class UrlUtils {
         // 从 `defaults` 中，获得 "protocol" "username" "password" "host" "port" "path" 到 `defaultXXX` 属性种。
         // 因为，在 Dubbo URL 中，这几个是独立的属性，不在 `Dubbo.parameters` 属性中。
         String defaultProtocol = defaults == null ? null : defaults.get("protocol");
+        // 没有协议，默认设置为 dubbo
         if (defaultProtocol == null || defaultProtocol.length() == 0) { // 如果地址没有协议缺省为 dubbo
             defaultProtocol = "dubbo";
         }
+        // 默认的用户名
         String defaultUsername = defaults == null ? null : defaults.get("username");
+        // 默认的密码
         String defaultPassword = defaults == null ? null : defaults.get("password");
+        // 默认的端口
         int defaultPort = StringUtils.parseInteger(defaults == null ? null : defaults.get("port"));
+        // 默认的应用
         String defaultPath = defaults == null ? null : defaults.get("path");
         Map<String, String> defaultParameters = defaults == null ? null : new HashMap<String, String>(defaults);
+        // 直接覆盖也行吧，暂时就看移除吧
         if (defaultParameters != null) { // 需要移除，因为这几个是独立属性。
             defaultParameters.remove("protocol");
             defaultParameters.remove("username");
