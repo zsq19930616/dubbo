@@ -34,12 +34,15 @@ public class ArgumentConfig implements Serializable {
     private static final long serialVersionUID = -2165482463925213595L;
 
     //arugment index -1 represents not set
+    // 未设置索引
     private Integer index = -1;
 
     //argument type
+    // 参数类型
     private String type;
 
     //callback interface
+    // 是否回调
     private Boolean callback;
 
     @Parameter(excluded = true)
