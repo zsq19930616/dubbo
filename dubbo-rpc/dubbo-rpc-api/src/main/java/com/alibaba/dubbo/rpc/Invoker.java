@@ -36,6 +36,7 @@ public interface Invoker<T> extends Node {
      *
      * @return service interface.
      */
+    // 接口
     Class<T> getInterface();
 
     /**
@@ -45,6 +46,7 @@ public interface Invoker<T> extends Node {
      * @return result
      * @throws RpcException
      */
+    // 调用
     Result invoke(Invocation invocation) throws RpcException;
 
 }

@@ -35,6 +35,7 @@ public interface Protocol {
      *
      * @return default port
      */
+    // 默认端口
     int getDefaultPort();
 
     /**

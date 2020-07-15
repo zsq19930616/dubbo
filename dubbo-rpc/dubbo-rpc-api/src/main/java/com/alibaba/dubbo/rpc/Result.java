@@ -34,6 +34,7 @@ public interface Result {
      *
      * @return result. if no result return null.
      */
+    // 接口返回值
     Object getValue();
 
     /**
@@ -41,6 +42,7 @@ public interface Result {
      *
      * @return exception. if no exception return null.
      */
+    // 异常
     Throwable getException();
 
     /**
@@ -48,6 +50,7 @@ public interface Result {
      *
      * @return has exception.
      */
+    // 是否有异常
     boolean hasException();
 
     /**
