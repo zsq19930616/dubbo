@@ -824,8 +824,11 @@ public class ExtensionLoader<T> {
 
         // 从配置文件中，加载拓展实现类数组
         Map<String, Class<?>> extensionClasses = new HashMap<String, Class<?>>();
+        // 加载 internal 资源
         loadFile(extensionClasses, DUBBO_INTERNAL_DIRECTORY);
+        // 加载 dubbo 资源
         loadFile(extensionClasses, DUBBO_DIRECTORY);
+        // 加载 services 资源
         loadFile(extensionClasses, SERVICES_DIRECTORY);
         return extensionClasses;
     }
@@ -843,23 +846,28 @@ public class ExtensionLoader<T> {
             Enumeration<java.net.URL> urls;
             // 获得文件名对应的所有文件数组
             ClassLoader classLoader = findClassLoader();
+            // 使用类加载器加载资源
             if (classLoader != null) {
                 urls = classLoader.getResources(fileName);
             } else {
                 urls = ClassLoader.getSystemResources(fileName);
             }
             // 遍历文件数组
+            // 有资源存在
             if (urls != null) {
                 while (urls.hasMoreElements()) {
                     java.net.URL url = urls.nextElement();
                     try {
+                        // 都是文本文件，使用 utf-8 解码，缓冲字符流读取
                         BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), "utf-8"));
                         try {
                             String line;
                             while ((line = reader.readLine()) != null) {
                                 // 跳过当前被注释掉的情况，例如 #spring=xxxxxxxxx
                                 final int ci = line.indexOf('#');
+                                // 搞不懂为啥不 continue; 一下
                                 if (ci >= 0) line = line.substring(0, ci);
+                                // 有 # line 就是 ""   不带 # 还是原来读到的那一行
                                 line = line.trim();
                                 if (line.length() > 0) {
                                     try {
@@ -867,22 +875,32 @@ public class ExtensionLoader<T> {
                                         String name = null;
                                         int i = line.indexOf('=');
                                         if (i > 0) {
+                                            // 获取 = 前边的 设置 name
                                             name = line.substring(0, i).trim();
+                                            // 获取 = 后边的 设置 line
                                             line = line.substring(i + 1).trim();
                                         }
+                                        // value 有值
                                         if (line.length() > 0) {
                                             // 判断拓展实现，是否实现拓展接口
+                                            // 初始化加载的类
                                             Class<?> clazz = Class.forName(line, true, classLoader);
+                                            // 判断是不是对应接口的子类
                                             if (!type.isAssignableFrom(clazz)) {
+                                                // 抛出异常。加载扩展类错误（接口 type ，类 xx，类不是这个接口的实现类）
                                                 throw new IllegalStateException("Error when load extension class(interface: " +
                                                         type + ", class line: " + clazz.getName() + "), class "
                                                         + clazz.getName() + "is not subtype of interface.");
                                             }
                                             // 缓存自适应拓展对象的类到 `cachedAdaptiveClass`
+                                            // 类上是否有这个注解
                                             if (clazz.isAnnotationPresent(Adaptive.class)) {
+                                                // 缓存的类型 为空，设置值。
                                                 if (cachedAdaptiveClass == null) {
                                                     cachedAdaptiveClass = clazz;
                                                 } else if (!cachedAdaptiveClass.equals(clazz)) {
+                                                    // 不为空，但是缓存类型也不一致
+                                                    // 抛出异常。找到多个自适应类,加载多次必须是同一个。
                                                     throw new IllegalStateException("More than 1 adaptive class found: "
                                                             + cachedAdaptiveClass.getClass().getName()
                                                             + ", " + clazz.getClass().getName());
@@ -890,6 +908,7 @@ public class ExtensionLoader<T> {
                                             } else {
                                                 // 缓存拓展 Wrapper 实现类到 `cachedWrapperClasses`
                                                 try {
+                                                    // 看看是不是包装类
                                                     clazz.getConstructor(type);
                                                     Set<Class<?>> wrappers = cachedWrapperClasses;
                                                     if (wrappers == null) {
@@ -899,11 +918,16 @@ public class ExtensionLoader<T> {
                                                     wrappers.add(clazz);
                                                 // 缓存拓展实现类到 `extensionClasses`
                                                 } catch (NoSuchMethodException e) {
+                                                    // 获取默认构造器
                                                     clazz.getConstructor();
                                                     // 未配置拓展名，自动生成。例如，DemoFilter 为 demo 。主要用于兼容 Java SPI 的配置。
+                                                    // name 为空
                                                     if (name == null || name.length() == 0) {
+                                                        // 找注解上的值
                                                         name = findAnnotationName(clazz);
                                                         if (name == null || name.length() == 0) {
+                                                            // 都没有那就走约定，长度大于接口名字，并且类名是以这个接口名结尾。
+                                                            // 截取前面的转为小写设置 name
                                                             if (clazz.getSimpleName().length() > type.getSimpleName().length()
                                                                     && clazz.getSimpleName().endsWith(type.getSimpleName())) {
                                                                 name = clazz.getSimpleName().substring(0, clazz.getSimpleName().length() - type.getSimpleName().length()).toLowerCase();
@@ -913,6 +937,7 @@ public class ExtensionLoader<T> {
                                                         }
                                                     }
                                                     // 获得拓展名，可以是数组，有多个拓展名。
+                                                    // 逗号 拆分
                                                     String[] names = NAME_SEPARATOR.split(name);
                                                     if (names != null && names.length > 0) {
                                                         // 缓存 @Activate 到 `cachedActivates` 。
@@ -930,6 +955,7 @@ public class ExtensionLoader<T> {
                                                             if (c == null) {
                                                                 extensionClasses.put(n, clazz);
                                                             } else if (c != clazz) {
+                                                                // 名字重复了，抛出异常
                                                                 throw new IllegalStateException("Duplicate extension " + type.getName() + " name " + n + " on " + c.getName() + " and " + clazz.getName());
                                                             }
                                                         }
@@ -961,14 +987,20 @@ public class ExtensionLoader<T> {
 
     @SuppressWarnings("deprecation")
     private String findAnnotationName(Class<?> clazz) {
+        // 获取类上注解
         com.alibaba.dubbo.common.Extension extension = clazz.getAnnotation(com.alibaba.dubbo.common.Extension.class);
+        // 为空
         if (extension == null) {
+            // 获取类名
             String name = clazz.getSimpleName();
+            // 看看是不是以这个结尾。
             if (name.endsWith(type.getSimpleName())) {
                 name = name.substring(0, name.length() - type.getSimpleName().length());
             }
+            // 转为小写返回
             return name.toLowerCase();
         }
+        // 有注解，就取注解的value
         return extension.value();
     }
 
