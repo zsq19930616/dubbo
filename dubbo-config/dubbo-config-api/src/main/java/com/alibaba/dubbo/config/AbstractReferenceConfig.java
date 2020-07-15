@@ -36,6 +36,7 @@ public abstract class AbstractReferenceConfig extends AbstractInterfaceConfig {
     // ======== Reference config default values, will take effect if reference's attribute is not set  ========
 
     // check if service provider exists
+    // 检查服务提供者是否存在
     protected Boolean check;
 
     // whether to eagle-init
