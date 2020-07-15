@@ -34,6 +34,7 @@ public class ConsumerConfig extends AbstractReferenceConfig {
     // networking framework client uses: netty, mina, etc.
     private String client; // TODO 芋艿
 
+    // 设置超时时间
     @Override
     public void setTimeout(Integer timeout) {
         super.setTimeout(timeout);
