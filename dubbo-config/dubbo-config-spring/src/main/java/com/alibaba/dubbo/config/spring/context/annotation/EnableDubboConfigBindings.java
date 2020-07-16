@@ -30,6 +30,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import(DubboConfigBindingsRegistrar.class)
+// EnableDubboConfigBinding 的集合
 public @interface EnableDubboConfigBindings {
 
     /**
