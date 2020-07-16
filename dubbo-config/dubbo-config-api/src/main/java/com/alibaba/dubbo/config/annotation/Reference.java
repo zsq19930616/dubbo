@@ -30,32 +30,46 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+// 引用注解类
 public @interface Reference {
 
+    // 接口类
     Class<?> interfaceClass() default void.class;
 
+    // 接口名
     String interfaceName() default "";
 
+    // 版本号
     String version() default "";
 
+    // 组
     String group() default "";
 
+    // 连接
     String url() default "";
 
+    // 调用方
     String client() default "";
 
+    // 是否泛化
     boolean generic() default false;
 
+    // 是否在本机
     boolean injvm() default false;
 
+    // 是否检查
     boolean check() default true;
 
+    // 是否初始化
     boolean init() default false;
 
+    // 是否懒加载
     boolean lazy() default false;
 
+    // 是否存根
     boolean stubevent() default false;
 
+    // 重连
     String reconnect() default "";
 
     boolean sticky() default false;

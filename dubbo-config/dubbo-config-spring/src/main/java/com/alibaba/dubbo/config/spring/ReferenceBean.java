@@ -46,6 +46,7 @@ public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
 
     private static final long serialVersionUID = 213195494150089726L;
 
+    // spring 应用上下文
     private transient ApplicationContext applicationContext;
 
     public ReferenceBean() {
@@ -79,6 +80,7 @@ public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
     @Override
     @SuppressWarnings({"unchecked"})
     public void afterPropertiesSet() throws Exception {
+        // 消费者不存在
         if (getConsumer() == null) {
             Map<String, ConsumerConfig> consumerConfigMap = applicationContext == null ? null : BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, ConsumerConfig.class, false, false);
             if (consumerConfigMap != null && consumerConfigMap.size() > 0) {
