@@ -25,14 +25,18 @@ import java.util.Map;
  *
  * @serial Don't change the class name and properties.
  */
+// rpc方法返回结果
 public class RpcResult implements Result, Serializable {
 
     private static final long serialVersionUID = -6925924956850004727L;
 
+    // 返回值
     private Object result;
 
+    // 异常处理
     private Throwable exception;
 
+    // 隐式参数
     private Map<String, String> attachments = new HashMap<String, String>();
 
     public RpcResult() {
@@ -46,6 +50,7 @@ public class RpcResult implements Result, Serializable {
         this.exception = exception;
     }
 
+    // 兼容方法，异常优先抛出
     public Object recreate() throws Throwable {
         // 有异常，抛出异常
         if (exception != null) {
