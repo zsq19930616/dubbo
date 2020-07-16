@@ -27,6 +27,7 @@ import java.util.Map;
  * @see com.alibaba.dubbo.rpc.Invoker#invoke(Invocation)
  * @see com.alibaba.dubbo.rpc.RpcInvocation
  */
+// 调用信息
 public interface Invocation {
 
     /**
@@ -35,6 +36,7 @@ public interface Invocation {
      * @return method name.
      * @serial
      */
+    // 方法名
     String getMethodName();
 
     /**
@@ -43,6 +45,7 @@ public interface Invocation {
      * @return parameter types.
      * @serial
      */
+    // 方法参数类型
     Class<?>[] getParameterTypes();
 
     /**
@@ -51,6 +54,7 @@ public interface Invocation {
      * @return arguments.
      * @serial
      */
+    // 方法参数值
     Object[] getArguments();
 
     /**
@@ -59,6 +63,7 @@ public interface Invocation {
      * @return attachments.
      * @serial
      */
+    // 附加属性信息
     Map<String, String> getAttachments();
 
     /**
@@ -67,6 +72,7 @@ public interface Invocation {
      * @return attachment value.
      * @serial
      */
+    // 获取属性值
     String getAttachment(String key);
 
     /**
@@ -75,6 +81,7 @@ public interface Invocation {
      * @return attachment value.
      * @serial
      */
+    // 获取值，没有返回默认值
     String getAttachment(String key, String defaultValue);
 
     /**
@@ -83,6 +90,7 @@ public interface Invocation {
      * @return invoker.
      * @transient
      */
+    // 获取当前的调用者
     Invoker<?> getInvoker();
 
 }
