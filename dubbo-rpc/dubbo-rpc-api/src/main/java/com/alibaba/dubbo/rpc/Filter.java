@@ -24,6 +24,7 @@ import com.alibaba.dubbo.common.extension.SPI;
  * 过滤器
  */
 @SPI
+// 过滤器
 public interface Filter {
 
     /**
@@ -42,6 +43,7 @@ public interface Filter {
      * @throws RpcException 发生 RpcException 异常
      * @see com.alibaba.dubbo.rpc.Invoker#invoke(Invocation)
      */
+    // 知道 servlet filter chain
     Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException;
 
 }
