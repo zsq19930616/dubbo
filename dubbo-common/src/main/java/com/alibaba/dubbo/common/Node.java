@@ -30,6 +30,7 @@ public interface Node {
      *
      * @return url.
      */
+    // 通用URL protocol://username:password@host:port/path?key=value&key=value
     URL getUrl();
 
     /**
@@ -39,6 +40,7 @@ public interface Node {
      *
      * @return available.
      */
+    // 是否可用
     boolean isAvailable();
 
     /**
@@ -46,6 +48,7 @@ public interface Node {
      *
      * destroy.
      */
+    // 销毁方法
     void destroy();
 
 }
