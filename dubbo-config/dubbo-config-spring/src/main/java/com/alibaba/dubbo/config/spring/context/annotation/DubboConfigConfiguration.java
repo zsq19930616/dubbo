@@ -19,6 +19,8 @@ package com.alibaba.dubbo.config.spring.context.annotation;
 import com.alibaba.dubbo.config.*;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Arrays;
+
 /**
  * Dubbo {@link AbstractConfig Config} {@link Configuration}
  *
