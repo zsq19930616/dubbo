@@ -34,20 +34,33 @@ import static com.alibaba.dubbo.config.spring.util.BeanFactoryUtils.getOptionalB
  */
 abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B extends AbstractInterfaceConfig> {
 
+    // 日志
     protected final Log logger = LogFactory.getLog(getClass());
 
+    // 注解
     protected final A annotation;
 
+    // 应用内上下文，知道 spring 就知道这玩意
     protected final ApplicationContext applicationContext;
 
+    // 类加载器
     protected final ClassLoader classLoader;
 
+    // bean 实例
     protected Object bean;
 
+    // 接口类型
     protected Class<?> interfaceClass;
 
+    /**
+     * 构造器，初始化 注解，类加载器，spring应用上下文
+     * @param annotation
+     * @param classLoader
+     * @param applicationContext
+     */
     protected AbstractAnnotationConfigBeanBuilder(A annotation, ClassLoader classLoader,
                                                   ApplicationContext applicationContext) {
+        // 空校验
         Assert.notNull(annotation, "The Annotation must not be null!");
         Assert.notNull(classLoader, "The ClassLoader must not be null!");
         Assert.notNull(applicationContext, "The ApplicationContext must not be null!");
@@ -65,13 +78,18 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
      */
     public final B build() throws Exception {
 
+        // 检查依赖，现在是空方法
         checkDependencies();
 
+        // 构建,  抽象方法
         B bean = doBuild();
 
+        // 配置bean
         configureBean(bean);
 
+        // 启动info日志
         if (logger.isInfoEnabled()) {
+            // bean 已经构建
             logger.info(bean + " has been built.");
         }
 
@@ -93,16 +111,22 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
 
     protected void configureBean(B bean) throws Exception {
 
+        // 配置bean之前 抽象方法
         preConfigureBean(annotation, bean);
 
+        // 配置注册中心
         configureRegistryConfigs(bean);
 
+        // 配置监控中心
         configureMonitorConfig(bean);
 
+        // 配置应用配置
         configureApplicationConfig(bean);
 
+        // 配置模块
         configureModuleConfig(bean);
 
+        // 配置bean
         postConfigureBean(annotation, bean);
 
     }
@@ -112,42 +136,52 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
 
     private void configureRegistryConfigs(B bean) {
 
+        // 解析注册中心配置,可以有多个
         String[] registryConfigBeanIds = resolveRegistryConfigBeanNames(annotation);
-
+        // 构建注册中心bean
         List<RegistryConfig> registryConfigs = getBeans(applicationContext, registryConfigBeanIds, RegistryConfig.class);
-
+        // 设置注册中心
         bean.setRegistries(registryConfigs);
 
     }
 
     private void configureMonitorConfig(B bean) {
 
+        // 获取监控中心名称
         String monitorBeanName = resolveMonitorConfigBeanName(annotation);
 
+        // 生成监控中心配置
         MonitorConfig monitorConfig = getOptionalBean(applicationContext, monitorBeanName, MonitorConfig.class);
 
+        // 设置监控中心
         bean.setMonitor(monitorConfig);
 
     }
 
     private void configureApplicationConfig(B bean) {
 
+        // 获取应用名
         String applicationConfigBeanName = resolveApplicationConfigBeanName(annotation);
 
+        // 获取配置类
         ApplicationConfig applicationConfig =
                 getOptionalBean(applicationContext, applicationConfigBeanName, ApplicationConfig.class);
 
+        // 设置配置类
         bean.setApplication(applicationConfig);
 
     }
 
     private void configureModuleConfig(B bean) {
 
+        // 获取模块名
         String moduleConfigBeanName = resolveModuleConfigBeanName(annotation);
 
+        // 获取模块配置
         ModuleConfig moduleConfig =
                 getOptionalBean(applicationContext, moduleConfigBeanName, ModuleConfig.class);
 
+        // 设置模块配置
         bean.setModule(moduleConfig);
 
     }

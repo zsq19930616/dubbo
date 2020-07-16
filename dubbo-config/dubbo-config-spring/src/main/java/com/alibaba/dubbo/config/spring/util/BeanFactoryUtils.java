@@ -51,14 +51,16 @@ public class BeanFactoryUtils {
      */
     public static <T> T getOptionalBean(ListableBeanFactory beanFactory, String beanName, Class<T> beanType) {
 
+        // 获取所有的beanNames
         String[] allBeanNames = beanNamesForTypeIncludingAncestors(beanFactory, beanType);
 
+        // 不包含，返回 null
         if (!StringUtils.isContains(allBeanNames, beanName)) {
             return null;
         }
-
+        // 创建bean Map集合
         Map<String, T> beansOfType = beansOfTypeIncludingAncestors(beanFactory, beanType);
-
+        // 获取对应的bean
         return beansOfType.get(beanName);
 
     }
@@ -75,12 +77,18 @@ public class BeanFactoryUtils {
      */
     public static <T> List<T> getBeans(ListableBeanFactory beanFactory, String[] beanNames, Class<T> beanType) {
 
+        // bean的名称数组
         String[] allBeanNames = beanNamesForTypeIncludingAncestors(beanFactory, beanType);
 
+        // 创建对应集合
         List<T> beans = new ArrayList<T>(beanNames.length);
 
+        // 遍历
         for (String beanName : beanNames) {
+            // 看你的beanName是不是在 allBeanNames 中
             if (StringUtils.isContains(allBeanNames, beanName)) {
+                // 在了，添加到beans中
+                // beanFactory.getBean(xx,xx) 根据名称和类型生成对应的bean
                 beans.add(beanFactory.getBean(beanName, beanType));
             }
         }
