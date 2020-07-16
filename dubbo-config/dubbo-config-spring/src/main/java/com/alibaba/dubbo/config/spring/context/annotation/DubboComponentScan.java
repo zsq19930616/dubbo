@@ -43,6 +43,7 @@ public @interface DubboComponentScan {
      *
      * @return the base packages to scan
      */
+    // 指定扫描的包
     String[] value() default {};
 
     /**
@@ -54,6 +55,7 @@ public @interface DubboComponentScan {
      *
      * @return the base packages to scan
      */
+    // 指定扫描的包
     String[] basePackages() default {};
 
     /**
@@ -63,6 +65,7 @@ public @interface DubboComponentScan {
      *
      * @return classes from the base packages to scan
      */
+    // 扫描指定类所在的包
     Class<?>[] basePackageClasses() default {};
 
 }
