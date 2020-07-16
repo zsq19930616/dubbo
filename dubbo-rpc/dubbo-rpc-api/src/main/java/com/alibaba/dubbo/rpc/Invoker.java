@@ -33,6 +33,12 @@ import com.alibaba.dubbo.common.Node;
 public interface Invoker<T> extends Node {
 
     /**
+     * URL getUrl();
+     * boolean isAvailable();
+     * void destroy();
+     */
+
+    /**
      * get service interface.
      *
      * @return service interface.

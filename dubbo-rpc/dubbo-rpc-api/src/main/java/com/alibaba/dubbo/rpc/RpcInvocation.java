@@ -116,6 +116,14 @@ public class RpcInvocation implements Invocation, Serializable {
         this(methodName, parameterTypes, arguments, attachments, null);
     }
 
+    /**
+     *
+     * @param methodName        方法名
+     * @param parameterTypes    方法参数类型
+     * @param arguments         方法参数
+     * @param attachments       隐式参数
+     * @param invoker           调用者
+     */
     public RpcInvocation(String methodName, Class<?>[] parameterTypes, Object[] arguments, Map<String, String> attachments, Invoker<?> invoker) {
         this.methodName = methodName;
         this.parameterTypes = parameterTypes == null ? new Class<?>[0] : parameterTypes;
