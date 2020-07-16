@@ -49,34 +49,49 @@ import static org.springframework.beans.factory.support.BeanDefinitionReaderUtil
  * @see DubboConfigBindingBeanPostProcessor
  * @since 2.5.8
  */
+// dubbo 配置绑定注册器
 public class DubboConfigBindingRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
 
+    // 日志
     private final Log log = LogFactory.getLog(getClass());
 
+    // 配置环境
     private ConfigurableEnvironment environment;
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-
+        // 获取类或者注解上的 EnableDubboConfigBinding 注解类
         AnnotationAttributes attributes = AnnotationAttributes.fromMap(
                 importingClassMetadata.getAnnotationAttributes(EnableDubboConfigBinding.class.getName()));
-
+        // 注册为spring bean
+        // registry spring bean的注册器
         registerBeanDefinitions(attributes, registry);
 
     }
 
     protected void registerBeanDefinitions(AnnotationAttributes attributes, BeanDefinitionRegistry registry) {
 
+        // 获取环境前缀
         String prefix = environment.resolvePlaceholders(attributes.getString("prefix"));
 
+        // 获取配置类
         Class<? extends AbstractConfig> configClass = attributes.getClass("type");
 
+        // 是否注册多实例
         boolean multiple = attributes.getBoolean("multiple");
 
+        // 注册bean
         registerDubboConfigBeans(prefix, configClass, multiple, registry);
 
     }
 
+    /**
+     *
+     * @param prefix        环境
+     * @param configClass   配置类
+     * @param multiple      是否多实例
+     * @param registry      注册器
+     */
     private void registerDubboConfigBeans(String prefix,
                                           Class<? extends AbstractConfig> configClass,
                                           boolean multiple,
@@ -84,6 +99,7 @@ public class DubboConfigBindingRegistrar implements ImportBeanDefinitionRegistra
 
         PropertySources propertySources = environment.getPropertySources();
 
+        // env.xx.xx
         Map<String, String> properties = getSubProperties(propertySources, prefix);
 
         if (CollectionUtils.isEmpty(properties)) {
@@ -94,6 +110,7 @@ public class DubboConfigBindingRegistrar implements ImportBeanDefinitionRegistra
             return;
         }
 
+        // 注册单例还是多实例,返回bean 的名称集合
         Set<String> beanNames = multiple ? resolveMultipleBeanNames(prefix, properties) :
                 Collections.singleton(resolveSingleBeanName(configClass, properties, registry));
 
