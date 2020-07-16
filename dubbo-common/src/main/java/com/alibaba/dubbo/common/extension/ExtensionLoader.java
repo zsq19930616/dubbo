@@ -67,12 +67,16 @@ public class ExtensionLoader<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(ExtensionLoader.class);
 
+    // resources/META-INF/services/
     private static final String SERVICES_DIRECTORY = "META-INF/services/";
 
+    // resources/META-INF/dubbo/
     private static final String DUBBO_DIRECTORY = "META-INF/dubbo/";
 
+    // resources/META-INF/dubbo/internal/
     private static final String DUBBO_INTERNAL_DIRECTORY = DUBBO_DIRECTORY + "internal/";
 
+    // 逗号拆分
     private static final Pattern NAME_SEPARATOR = Pattern.compile("\\s*[,]+\\s*");
 
     // ============================== 静态属性 ==============================
@@ -82,6 +86,7 @@ public class ExtensionLoader<T> {
      *
      * key：拓展接口
      */
+    // 不用重复加载。
     private static final ConcurrentMap<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS = new ConcurrentHashMap<Class<?>, ExtensionLoader<?>>();
     /**
      * 拓展实现类集合
