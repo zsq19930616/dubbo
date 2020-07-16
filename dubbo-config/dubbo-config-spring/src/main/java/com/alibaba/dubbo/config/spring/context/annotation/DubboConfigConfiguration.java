@@ -34,6 +34,7 @@ import org.springframework.context.annotation.Configuration;
  * @see ConsumerConfig
  * @since 2.5.8
  */
+// dubbo 配置项
 public class DubboConfigConfiguration {
 
     /**
@@ -48,6 +49,7 @@ public class DubboConfigConfiguration {
             @EnableDubboConfigBinding(prefix = "dubbo.provider", type = ProviderConfig.class),
             @EnableDubboConfigBinding(prefix = "dubbo.consumer", type = ConsumerConfig.class)
     })
+    // 单例
     public static class Single {
 
     }
@@ -64,6 +66,7 @@ public class DubboConfigConfiguration {
             @EnableDubboConfigBinding(prefix = "dubbo.providers", type = ProviderConfig.class, multiple = true),
             @EnableDubboConfigBinding(prefix = "dubbo.consumers", type = ConsumerConfig.class, multiple = true)
     })
+    // 多实例
     public static class Multiple {
 
     }
