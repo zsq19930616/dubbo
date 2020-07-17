@@ -40,9 +40,12 @@ public abstract class Wrapper {
      */
     private static final Map<Class<?>, Wrapper> WRAPPER_MAP = new ConcurrentHashMap<Class<?>, Wrapper>(); //class wrapper map
 
+    // 空的字符串数组，一个字符串对象都么有
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
+    // Java 所有类的基类，Object 中的方法。
     private static final String[] OBJECT_METHODS = new String[]{"getClass", "hashCode", "toString", "equals"};
 
+    // 默认的 Object Wrapper
     private static final Wrapper OBJECT_WRAPPER = new Wrapper() {
 
         @Override
