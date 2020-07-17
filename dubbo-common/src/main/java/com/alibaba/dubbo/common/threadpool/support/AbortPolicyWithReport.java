@@ -38,6 +38,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  *
  * 拒绝策略实现类。打印 JStack ，分析线程状态。
  */
+// ThreadPoolExecutor.AbortPolicy 这个拒绝策略是抛出异常
 public class AbortPolicyWithReport extends ThreadPoolExecutor.AbortPolicy {
 
     protected static final Logger logger = LoggerFactory.getLogger(AbortPolicyWithReport.class);
@@ -117,6 +118,7 @@ public class AbortPolicyWithReport extends ThreadPoolExecutor.AbortPolicy {
                 // 获得输出流
                 FileOutputStream jstackStream = null;
                 try {
+                    // 日志输出到 Dubbo_JStack.log.日期  日志文件中
                     jstackStream = new FileOutputStream(new File(dumpPath, "Dubbo_JStack.log" + "." + dateStr));
                     // 打印 JStack
                     JVMUtil.jstack(jstackStream);

@@ -32,6 +32,7 @@ public class JVMUtil {
         ThreadMXBean threadMxBean = ManagementFactory.getThreadMXBean();
         // 循环每个线程
         for (ThreadInfo threadInfo : threadMxBean.dumpAllThreads(true, true)) {
+            // getThreadDumpString 包装线程信息
             stream.write(getThreadDumpString(threadInfo).getBytes());
         }
     }
