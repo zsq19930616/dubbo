@@ -32,6 +32,7 @@ public interface Exporter<T> {
      *
      * @return invoker
      */
+    // 获取调用者
     Invoker<T> getInvoker();
 
     /**
@@ -41,6 +42,7 @@ public interface Exporter<T> {
      * getInvoker().destroy();
      * </code>
      */
+    // 取消暴露服务
     void unexport();
 
 }
