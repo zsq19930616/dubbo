@@ -37,13 +37,17 @@ public final class JavaBeanDescriptor implements Serializable, Iterable<Map.Entr
     /**
      * @see com.alibaba.dubbo.common.utils.ReflectUtils#isPrimitive(Class)
      */
+    // 基本类型
     public static final int TYPE_PRIMITIVE = 6;
+    // bean
     public static final int TYPE_BEAN = 7;
     private static final long serialVersionUID = -8505586483570518029L;
+    // 枚举 属性name
     private static final String ENUM_PROPERTY_NAME = "name";
-
+    // 类属性 name
     private static final String CLASS_PROPERTY_NAME = "name";
 
+    // 基本值
     private static final String PRIMITIVE_PROPERTY_VALUE = "value";
 
     /**
@@ -81,34 +85,42 @@ public final class JavaBeanDescriptor implements Serializable, Iterable<Map.Entr
         this.type = type;
     }
 
+    // 是否是类
     public boolean isClassType() {
         return TYPE_CLASS == type;
     }
 
+    // 是否是枚举
     public boolean isEnumType() {
         return TYPE_ENUM == type;
     }
 
+    // 是否集合
     public boolean isCollectionType() {
         return TYPE_COLLECTION == type;
     }
 
+    // 是否map
     public boolean isMapType() {
         return TYPE_MAP == type;
     }
 
+    // 是否数组
     public boolean isArrayType() {
         return TYPE_ARRAY == type;
     }
 
+    // 是否基本类型
     public boolean isPrimitiveType() {
         return TYPE_PRIMITIVE == type;
     }
 
+    // 是否JavaBean
     public boolean isBeanType() {
         return TYPE_BEAN == type;
     }
 
+    // 获取类型
     public int getType() {
         return type;
     }
@@ -132,6 +144,7 @@ public final class JavaBeanDescriptor implements Serializable, Iterable<Map.Entr
         return oldValue;
     }
 
+    // 设置枚举 name 值
     public String setEnumNameProperty(String name) {
         if (isEnumType()) {
             Object result = setProperty(ENUM_PROPERTY_NAME, name);
@@ -140,6 +153,7 @@ public final class JavaBeanDescriptor implements Serializable, Iterable<Map.Entr
         throw new IllegalStateException("The instance is not a enum wrapper");
     }
 
+    // 获取枚举属性name值
     public String getEnumPropertyName() {
         if (isEnumType()) {
             Object result = getProperty(ENUM_PROPERTY_NAME).toString();
