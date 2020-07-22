@@ -26,15 +26,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.Map;
+import java.util.*;
 
 public final class JavaBeanSerializeUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(JavaBeanSerializeUtil.class);
     private static final Map<String, Class<?>> TYPES = new HashMap<String, Class<?>>();
+    // 数组前缀
     private static final String ARRAY_PREFIX = "[";
     private static final String REFERENCE_TYPE_PREFIX = "L";
     private static final String REFERENCE_TYPE_SUFFIX = ";";
@@ -61,6 +59,7 @@ public final class JavaBeanSerializeUtil {
     private JavaBeanSerializeUtil() {
     }
 
+    // JavaBeanDescriptor 序列化
     public static JavaBeanDescriptor serialize(Object obj) {
         JavaBeanDescriptor result = serialize(obj, JavaBeanAccessor.FIELD);
         return result;
