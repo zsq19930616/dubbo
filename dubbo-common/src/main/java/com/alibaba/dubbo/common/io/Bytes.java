@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.DeflaterOutputStream;
@@ -39,6 +40,7 @@ public class Bytes {
 
     private static final char[] BASE16 = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'}, BASE64 = C64.toCharArray();
 
+    // 15       63      255
     private static final int MASK4 = 0x0f, MASK6 = 0x3f, MASK8 = 0xff;
 
     private static final Map<Integer, byte[]> DECODE_TABLE_MAP = new ConcurrentHashMap<Integer, byte[]>();
@@ -55,6 +57,7 @@ public class Bytes {
      * @param length new length.
      * @return new byte array.
      */
+    // 字节数组 copy
     public static byte[] copyOf(byte[] src, int length) {
         byte[] dest = new byte[length];
         System.arraycopy(src, 0, dest, 0, Math.min(src.length, length));
