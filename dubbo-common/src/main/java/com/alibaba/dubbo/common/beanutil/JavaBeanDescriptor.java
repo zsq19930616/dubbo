@@ -24,10 +24,15 @@ import java.util.Map;
 
 public final class JavaBeanDescriptor implements Serializable, Iterable<Map.Entry<Object, Object>> {
 
+    // 类
     public static final int TYPE_CLASS = 1;
+    // 枚举
     public static final int TYPE_ENUM = 2;
+    // 集合
     public static final int TYPE_COLLECTION = 3;
+    // map
     public static final int TYPE_MAP = 4;
+    // 数组
     public static final int TYPE_ARRAY = 5;
     /**
      * @see com.alibaba.dubbo.common.utils.ReflectUtils#isPrimitive(Class)
