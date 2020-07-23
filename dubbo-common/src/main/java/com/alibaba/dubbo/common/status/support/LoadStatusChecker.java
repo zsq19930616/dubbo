@@ -30,6 +30,11 @@ import java.lang.reflect.Method;
 @Activate
 public class LoadStatusChecker implements StatusChecker {
 
+    public static void main(String[] args) {
+        Status check = new LoadStatusChecker().check();
+        System.out.println(check);
+    }
+
     public Status check() {
         OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
         double load;
