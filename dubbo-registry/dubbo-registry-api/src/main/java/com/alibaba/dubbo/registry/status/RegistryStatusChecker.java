@@ -26,27 +26,37 @@ import java.util.Collection;
 
 /**
  * RegistryStatusChecker
- *
+ * 注册中心状态检查
  */
 @Activate
 public class RegistryStatusChecker implements StatusChecker {
 
     public Status check() {
+        // 获取注册中心集合
         Collection<Registry> regsitries = AbstractRegistryFactory.getRegistries();
+        // 为空
         if (regsitries.isEmpty()) {
+            // 返回 unknown
             return new Status(Status.Level.UNKNOWN);
         }
+        // 默认是 OK 的
         Status.Level level = Status.Level.OK;
+        // 字符串逗号拼接注册中心
         StringBuilder buf = new StringBuilder();
         for (Registry registry : regsitries) {
+            // 第一次不用拼接 逗号
             if (buf.length() > 0) {
                 buf.append(",");
             }
+            // 拼接 address 后面链接状态
             buf.append(registry.getUrl().getAddress());
+            // 注册中心不可用
             if (!registry.isAvailable()) {
+                // 设为错误
                 level = Status.Level.ERROR;
                 buf.append("(disconnected)");
             } else {
+                // 可用，正常连接
                 buf.append("(connected)");
             }
         }

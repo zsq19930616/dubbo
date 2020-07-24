@@ -56,6 +56,7 @@ package com.alibaba.com.caucho.hessian.util;
  * integers.
  */
 public class IntMap {
+
     /**
      * Encoding of a null entry.  Since NULL is equal to Integer.MIN_VALUE,
      * it's impossible to distinguish between the two.

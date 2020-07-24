@@ -847,6 +847,7 @@ public class ExtensionLoader<T> {
     private void loadFile(Map<String, Class<?>> extensionClasses, String dir) {
         // 完整的文件名
         String fileName = dir + type.getName();
+        System.out.println(fileName);
         try {
             Enumeration<java.net.URL> urls;
             // 获得文件名对应的所有文件数组
@@ -868,6 +869,7 @@ public class ExtensionLoader<T> {
                         try {
                             String line;
                             while ((line = reader.readLine()) != null) {
+                                System.out.println(line);
                                 // 跳过当前被注释掉的情况，例如 #spring=xxxxxxxxx
                                 final int ci = line.indexOf('#');
                                 // 搞不懂为啥不 continue; 一下

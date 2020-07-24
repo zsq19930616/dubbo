@@ -129,11 +129,17 @@ public abstract class AbstractRegistry implements Registry {
      */
     private AtomicBoolean destroyed = new AtomicBoolean(false);
 
+    /**
+     * 注册中心url
+     * @param url
+     */
     public AbstractRegistry(URL url) {
         setUrl(url);
         // Start file save timer
+        // save.file 是否保存文件
         syncSaveFile = url.getParameter(Constants.REGISTRY_FILESAVE_SYNC_KEY, false);
         // 获得 `file`
+        // 获取缓存的文件名
         String filename = url.getParameter(Constants.FILE_KEY, System.getProperty("user.home") + "/.dubbo/dubbo-registry-" + url.getParameter(Constants.APPLICATION_KEY) + "-" + url.getAddress() + ".cache");
         File file = null;
         if (ConfigUtils.isNotEmpty(filename)) {

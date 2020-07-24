@@ -54,6 +54,10 @@ public class InjvmProtocol extends AbstractProtocol implements Protocol {
         INSTANCE = this;
     }
 
+    public static void main(String[] args) {
+        getInjvmProtocol();
+    }
+
     public static InjvmProtocol getInjvmProtocol() {
         if (INSTANCE == null) {
             ExtensionLoader.getExtensionLoader(Protocol.class).getExtension(InjvmProtocol.NAME); // load

@@ -47,22 +47,24 @@ import static com.alibaba.dubbo.common.Constants.*;
 
 /**
  * RegistryProtocol
- *
+ * <p>
  * 注册中心协议实现类。
  */
 public class RegistryProtocol implements Protocol {
 
+    // 日志
     private final static Logger logger = LoggerFactory.getLogger(RegistryProtocol.class);
 
     /**
      * 单例。在 Dubbo SPI 中，被初始化，有且仅有一次。
      */
     private static RegistryProtocol INSTANCE;
+    // URL 监听器集合
     private final Map<URL, NotifyListener> overrideListeners = new ConcurrentHashMap<URL, NotifyListener>();
 
     /**
      * 绑定关系集合。
-     *
+     * <p>
      * key：服务 Dubbo URL
      */
     // To solve the problem of RMI repeated exposure port conflicts, the services that have been exposed are no longer exposed.
@@ -183,11 +185,11 @@ public class RegistryProtocol implements Protocol {
 
     /**
      * 暴露服务。
-     *
+     * <p>
      * 此处的 Local 指的是，本地启动服务，但是不包括向注册中心注册服务的意思。
      *
      * @param originInvoker 原始 Invoker
-     * @param <T> 泛型
+     * @param <T>           泛型
      * @return Exporter 对象
      */
     @SuppressWarnings("unchecked")
@@ -216,7 +218,7 @@ public class RegistryProtocol implements Protocol {
 
     /**
      * Reexport the invoker of the modified url
-     *
+     * <p>
      * 对修改了 url 的 invoker 重新 export
      *
      * @param originInvoker
@@ -293,7 +295,7 @@ public class RegistryProtocol implements Protocol {
 
     /**
      * Get the address of the providerUrl through the url of the invoker
-     *
+     * <p>
      * 通过 invoker 的 url 获取 providerUrl 的地址
      *
      * @param origininvoker
@@ -309,7 +311,7 @@ public class RegistryProtocol implements Protocol {
 
     /**
      * Get the key cached in bounds by invoker
-     *
+     * <p>
      * 获 取invoker 在 bounds中 缓存的key
      *
      * @param originInvoker 原始 Invoker
@@ -354,11 +356,11 @@ public class RegistryProtocol implements Protocol {
     /**
      * 执行服务引用，返回 Invoker 对象
      *
-     * @param cluster Cluster 对象
+     * @param cluster  Cluster 对象
      * @param registry 注册中心对象
-     * @param type 服务接口类型
-     * @param url 注册中心 URL
-     * @param <T> 泛型
+     * @param type     服务接口类型
+     * @param url      注册中心 URL
+     * @param <T>      泛型
      * @return Invoker 对象
      */
     private <T> Invoker<T> doRefer(Cluster cluster, Registry registry, Class<T> type, URL url) {
@@ -378,7 +380,7 @@ public class RegistryProtocol implements Protocol {
         }
         // 向注册中心订阅服务提供者 + 路由规则 + 配置规则
         directory.subscribe(subscribeUrl.addParameter(Constants.CATEGORY_KEY,
-                        Constants.PROVIDERS_CATEGORY
+                Constants.PROVIDERS_CATEGORY
                         + "," + Constants.CONFIGURATORS_CATEGORY
                         + "," + Constants.ROUTERS_CATEGORY));
 
@@ -405,7 +407,7 @@ public class RegistryProtocol implements Protocol {
 
         /**
          * Invoker 对象
-         *
+         * <p>
          * 因为父类未提供 invoker 属性的获取方法，因此这里增加了和父类 invoker 一样的这个属性。
          */
         private final Invoker<T> invoker;
@@ -436,7 +438,7 @@ public class RegistryProtocol implements Protocol {
      */
     /**
      * 重新 export ：protocol 中的 exporter destroy 问题
-     *
+     * <p>
      * 1. 要求 registry protocol 返回的 exporter 可以正常 destroy
      * 2. notify 后不需要重新向注册中心注册
      * 3. export 方法传入的 invoker 最好能一直作为 exporter 的 invoker.
@@ -536,7 +538,7 @@ public class RegistryProtocol implements Protocol {
 
     /**
      * exporter proxy, establish the corresponding relationship between the returned exporter and the exporter exported by the protocol, and can modify the relationship at the time of override.
-     *
+     * <p>
      * exporter 代理, 建立返回的 exporter 与 protocol export 出的 exporter 的对应关系，在 override 时可以进行关系修改.
      *
      * @param <T>

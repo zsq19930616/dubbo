@@ -21,8 +21,11 @@ package com.alibaba.dubbo.common.status;
  */
 public class Status {
 
+    // 状态
     private final Level level;
+    // 地址链
     private final String message;
+    // 描述
     private final String description;
 
     public Status(Level level) {
@@ -57,21 +60,25 @@ public class Status {
     public static enum Level {
         /**
          * OK
+         * 好着了
          */
         OK,
 
         /**
          * WARN
+         * 警告
          */
         WARN,
 
         /**
          * ERROR
+         * 错误
          */
         ERROR,
 
         /**
          * UNKNOWN
+         * 未知
          */
         UNKNOWN
     }

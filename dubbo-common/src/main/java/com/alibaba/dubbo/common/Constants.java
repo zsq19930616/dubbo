@@ -25,16 +25,22 @@ import java.util.regex.Pattern;
  */
 public class Constants {
 
+    // 服务提供者
     public static final String PROVIDER = "provider";
 
+    // 消费者
     public static final String CONSUMER = "consumer";
 
+    // 注册
     public static final String REGISTER = "register";
 
+    // 取消注册
     public static final String UNREGISTER = "unregister";
 
+    // 订阅
     public static final String SUBSCRIBE = "subscribe";
 
+    // 取消订阅
     public static final String UNSUBSCRIBE = "unsubscribe";
 
     /**

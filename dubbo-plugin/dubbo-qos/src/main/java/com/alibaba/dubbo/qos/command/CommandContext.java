@@ -18,18 +18,24 @@ package com.alibaba.dubbo.qos.command;
 
 import io.netty.channel.Channel;
 
+// 命令信息
 public class CommandContext {
+    // 命令名称
     private String commandName;
+    // 参数
     private String[] args;
+    // 通道
     private Channel remote;
+    // 是否http
     private boolean isHttp;
+    // 原始请求
     private Object orginRequest;
 
     public CommandContext(String commandName) {
         this.commandName = commandName;
     }
 
-    public CommandContext(String commandName, String[] args,boolean isHttp) {
+    public CommandContext(String commandName, String[] args, boolean isHttp) {
         this.commandName = commandName;
         this.args = args;
         this.isHttp = isHttp;
