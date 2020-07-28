@@ -26,28 +26,40 @@ import java.util.List;
  */
 public interface MonitorService {
 
+    // 应用
     String APPLICATION = "application";
 
+    // 接口
     String INTERFACE = "interface";
 
+    // 方法
     String METHOD = "method";
 
+    // 组
     String GROUP = "group";
 
+    // 版本号
     String VERSION = "version";
 
+    // 消费者
     String CONSUMER = "consumer";
 
+    // 服务提供者
     String PROVIDER = "provider";
 
+    // 时间戳
     String TIMESTAMP = "timestamp";
 
+    // 成功
     String SUCCESS = "success";
 
+    // 失败
     String FAILURE = "failure";
 
+    // 输入
     String INPUT = Constants.INPUT_KEY;
 
+    // 输出
     String OUTPUT = Constants.OUTPUT_KEY;
 
     String ELAPSED = "elapsed";
@@ -71,6 +83,7 @@ public interface MonitorService {
      *
      * @param statistics
      */
+    // 监控url
     void collect(URL statistics);
 
     /**
@@ -84,6 +97,7 @@ public interface MonitorService {
      * @param query
      * @return statistics
      */
+    // 查找
     List<URL> lookup(URL query);
 
 }
