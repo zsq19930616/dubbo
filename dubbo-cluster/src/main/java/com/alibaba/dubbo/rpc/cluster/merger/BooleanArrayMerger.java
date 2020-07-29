@@ -19,7 +19,16 @@ package com.alibaba.dubbo.rpc.cluster.merger;
 
 import com.alibaba.dubbo.rpc.cluster.Merger;
 
+import java.util.Arrays;
+
 public class BooleanArrayMerger implements Merger<boolean[]> {
+
+    public static void main(String[] args) {
+        boolean[] a = {true, false};
+        boolean[] b = {true, false};
+        boolean[] merge = new BooleanArrayMerger().merge(a, b);
+        System.out.println(Arrays.toString(merge));
+    }
 
     @Override
     public boolean[] merge(boolean[]... items) {
