@@ -39,6 +39,7 @@ public class MergerFactory {
         Merger result;
         // 数组类型
         if (returnType.isArray()) {
+            // 获取真实类型
             Class type = returnType.getComponentType();
             // 从缓存中获得 Merger 对象
             result = mergerCache.get(type);
@@ -71,6 +72,10 @@ public class MergerFactory {
             Merger m = ExtensionLoader.getExtensionLoader(Merger.class).getExtension(name);
             mergerCache.putIfAbsent(ReflectUtils.getGenericClass(m.getClass()), m);
         }
+    }
+
+    public static void main(String[] args) {
+        loadMergers();
     }
 
 }

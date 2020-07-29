@@ -40,6 +40,7 @@ public class ArrayMerger implements Merger<Object[]> {
         System.out.println(merge1.length);
     }
 
+    // 默认的
     public static final ArrayMerger INSTANCE = new ArrayMerger();
 
     // 数组合并返回，按照顺序

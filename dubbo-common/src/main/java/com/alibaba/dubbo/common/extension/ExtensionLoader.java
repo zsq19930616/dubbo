@@ -105,6 +105,7 @@ public class ExtensionLoader<T> {
      * 拓展接口。
      * 例如，Protocol
      */
+    // 接口类
     private final Class<?> type;
     /**
      * 对象工厂
@@ -141,6 +142,7 @@ public class ExtensionLoader<T> {
      *
      * 用于 {@link #getActivateExtension(URL, String)}
      */
+    // 缓存激活的实现类
     private final Map<String, Activate> cachedActivates = new ConcurrentHashMap<String, Activate>();
     /**
      * 缓存的拓展对象集合
@@ -185,6 +187,7 @@ public class ExtensionLoader<T> {
      *
      * 通过 {@link #loadExtensionClasses} 加载
      */
+    // 包装类缓存类型集合
     private Set<Class<?>> cachedWrapperClasses;
 
     /**
@@ -199,6 +202,7 @@ public class ExtensionLoader<T> {
 
     private ExtensionLoader(Class<?> type) {
         this.type = type;
+        System.out.println(type.getSimpleName());
         objectFactory = (type == ExtensionFactory.class ? null : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());
     }
 
