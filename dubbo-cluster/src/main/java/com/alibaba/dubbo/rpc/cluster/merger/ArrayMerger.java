@@ -22,8 +22,27 @@ import java.lang.reflect.Array;
 
 public class ArrayMerger implements Merger<Object[]> {
 
+    public static void main(String[] args) {
+        ArrayMerger arrayMerger = new ArrayMerger();
+        Object[][] objects = new Object[2][3];
+        for (int i = 0; i < objects.length; i++) {
+            for (int j = 0; j < objects.length; j++) {
+                objects[i][j] = new Object();
+            }
+        }
+        Object[] merge = arrayMerger.merge(objects);
+        System.out.println(merge.length);
+
+
+        Object[] o1 = {new Object(),new Object()};
+        Object[] o2 = {new Object(),new Object()};
+        Object[] merge1 = arrayMerger.merge(o1, o2);
+        System.out.println(merge1.length);
+    }
+
     public static final ArrayMerger INSTANCE = new ArrayMerger();
 
+    // 数组合并返回，按照顺序
     public Object[] merge(Object[]... others) {
         if (others.length == 0) {
             return null;
@@ -46,6 +65,7 @@ public class ArrayMerger implements Merger<Object[]> {
 
         Class<?> type = others[0].getClass().getComponentType();
 
+        // 创建对应类型的数组
         Object result = Array.newInstance(type, totalLen);
         int index = 0;
         for (Object array : others) {

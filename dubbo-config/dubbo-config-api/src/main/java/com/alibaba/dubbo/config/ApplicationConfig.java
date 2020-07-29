@@ -104,6 +104,7 @@ public class ApplicationConfig extends AbstractConfig {
 
     // 无参构造器
     public ApplicationConfig() {
+        System.out.println("ApplicationConfig无参构造器");
     }
 
     // new 对象，初始化应用名称构造器

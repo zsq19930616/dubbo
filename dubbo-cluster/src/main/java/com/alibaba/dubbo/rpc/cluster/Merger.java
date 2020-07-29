@@ -23,6 +23,7 @@ import com.alibaba.dubbo.common.extension.SPI;
  *
  * @param <T>
  */
+// 合并
 @SPI
 public interface Merger<T> {
 
