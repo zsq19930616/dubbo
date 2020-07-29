@@ -23,6 +23,7 @@ import java.util.Set;
 
 public class SetMerger implements Merger<Set<?>> {
 
+    // 后面的覆盖前面的
     @Override
     public Set<Object> merge(Set<?>... items) {
         Set<Object> result = new HashSet<Object>();
