@@ -26,6 +26,7 @@ import java.util.Map;
  */
 public class MapMerger implements Merger<Map<?, ?>> {
 
+    // 后面的覆盖前面的
     @Override
     public Map<?, ?> merge(Map<?, ?>... items) {
         if (items.length == 0) {
