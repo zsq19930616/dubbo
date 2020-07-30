@@ -697,6 +697,7 @@ public class ExtensionLoader<T> {
             buf.append(":\r\n");
             buf.append(StringUtils.toString(entry.getValue()));
         }
+        System.out.println(this);
         return new IllegalStateException(buf.toString());
     }
 

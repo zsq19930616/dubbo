@@ -29,6 +29,9 @@ public class Consumer {
         context.start();
         DemoService demoService = (DemoService) context.getBean("demoService"); // get remote service proxy
         System.out.println("aaa");
+        if(demoService == null){
+            return;
+        }
         while (true) {
             try {
 //                try {
@@ -49,7 +52,7 @@ public class Consumer {
                 demoService.sayHello("world");
 //                ProtocolConfig.destroyAll();
 
-                Thread.sleep(10000000);
+                Thread.sleep(1000);
 //                demoService.say02();
 //                demoService.say03();
 //                demoService.say04();

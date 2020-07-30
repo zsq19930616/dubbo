@@ -9,15 +9,17 @@
     <dubbo:application name="hello-world-app"  />
 
     <!-- 使用multicast广播注册中心暴露服务地址 -->
-    <dubbo:registry protocol="zookeeper" address="127.0.0.1" port="2181" />
+    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
 
     <!-- 用dubbo协议在20880端口暴露服务 -->
     <dubbo:protocol name="dubbo" port="20880" server="netty4"/>
 
     <!-- 声明需要暴露的服务接口 -->
-    <dubbo:service interface="com.alibaba.dubbo.demo.DemoService" ref="demoService" group="g1" />
-
+    <dubbo:provider>
+        <dubbo:service interface="com.alibaba.dubbo.demo.DemoService" ref="demoService" version="1.0"/>
+    </dubbo:provider>
     <!-- 和本地bean一样实现服务 -->
     <bean id="demoService" class="com.alibaba.dubbo.demo.provider.DemoServiceImpl" />
+
 
 </beans>
