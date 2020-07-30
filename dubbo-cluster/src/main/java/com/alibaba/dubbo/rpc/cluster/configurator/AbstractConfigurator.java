@@ -51,6 +51,7 @@ public abstract class AbstractConfigurator implements Configurator {
 
     @Override
     public URL configure(URL url) {
+        // configuratorUrl 的 host 为空 或者 url 为空 或者 url的 host 为空
         if (configuratorUrl.getHost() == null || url == null || url.getHost() == null) {
             return url;
         }
@@ -78,8 +79,10 @@ public abstract class AbstractConfigurator implements Configurator {
         return url;
     }
 
+    // configuratorUrl 的 host 和 传入的 url
     private URL configureIfMatch(String host, URL url) {
         // 匹配 Host
+        // 0.0.0.0
         if (Constants.ANYHOST_VALUE.equals(configuratorUrl.getHost()) || host.equals(configuratorUrl.getHost())) {
             // 匹配 "application"
             String configApplication = configuratorUrl.getParameter(Constants.APPLICATION_KEY, configuratorUrl.getUsername()); // TODO 8038 芋艿，configuratorUrl.getUsername() 为啥 username
