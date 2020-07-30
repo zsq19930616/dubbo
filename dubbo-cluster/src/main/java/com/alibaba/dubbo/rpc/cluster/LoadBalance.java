@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * LoadBalance. (SPI, Singleton, ThreadSafe)
- *
+ * <p>
  * LoadBalance 接口
  *
  * <p>
@@ -36,12 +36,13 @@ import java.util.List;
  *
  * @see com.alibaba.dubbo.rpc.cluster.Cluster#join(Directory)
  */
+// 默认是 random 随机
 @SPI(RandomLoadBalance.NAME)
 public interface LoadBalance {
 
     /**
      * select one invoker in list.
-     *
+     * <p>
      * 从 Invoker 集合中，选择一个
      *
      * @param invokers   invokers.
@@ -49,6 +50,7 @@ public interface LoadBalance {
      * @param invocation invocation.
      * @return selected invoker.
      */
+    // 选择一个 Invoker 调用者
     @Adaptive("loadbalance")
     <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) throws RpcException;
 

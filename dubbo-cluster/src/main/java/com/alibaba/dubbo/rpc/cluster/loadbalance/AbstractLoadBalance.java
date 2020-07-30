@@ -26,11 +26,12 @@ import java.util.List;
 
 /**
  * AbstractLoadBalance
- *
+ * <p>
  * LoadBalance 抽象类，提供了权重计算的功能
  */
 public abstract class AbstractLoadBalance implements LoadBalance {
 
+    // 计算权重
     static int calculateWarmupWeight(int uptime, int warmup, int weight) {
         // 计算权重
         int ww = (int) ((float) uptime / ((float) warmup / (float) weight));
@@ -40,17 +41,21 @@ public abstract class AbstractLoadBalance implements LoadBalance {
 
     @Override
     public <T> Invoker<T> select(List<Invoker<T>> invokers, URL url, Invocation invocation) {
+        // 如果 invokers 为空，返回null
         if (invokers == null || invokers.isEmpty()) {
             return null;
         }
+        // 只有一个 直接返回
         if (invokers.size() == 1) {
             return invokers.get(0);
         }
+        // 返回一个合适的
         return doSelect(invokers, url, invocation);
     }
 
     protected abstract <T> Invoker<T> doSelect(List<Invoker<T>> invokers, URL url, Invocation invocation);
 
+    // 权重
     protected int getWeight(Invoker<?> invoker, Invocation invocation) {
         // 获得 weight 配置，即服务权重。默认为 100
         int weight = invoker.getUrl().getMethodParameter(invocation.getMethodName(), Constants.WEIGHT_KEY, Constants.DEFAULT_WEIGHT);

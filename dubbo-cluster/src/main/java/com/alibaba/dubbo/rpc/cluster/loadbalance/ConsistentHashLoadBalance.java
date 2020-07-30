@@ -48,6 +48,7 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
     @SuppressWarnings("unchecked")
     @Override
     protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, URL url, Invocation invocation) {
+        // 组/接口名:版本号.方法名
         String key = invokers.get(0).getUrl().getServiceKey() + "." + invocation.getMethodName();
         // 基于 invokers 集合，根据对象内存地址来计算定义哈希值
         int identityHashCode = System.identityHashCode(invokers);
