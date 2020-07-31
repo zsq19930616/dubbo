@@ -21,10 +21,11 @@ import com.alibaba.dubbo.common.URL;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * ThreadLocalCache
- *
+ * <p>
  * 当前线程缓存，比如一个页面渲染，用到很多 portal，每个 portal 都要去查用户信息，通过线程缓存，可以减少这种多余访问。
  */
 public class ThreadLocalCache implements Cache {
