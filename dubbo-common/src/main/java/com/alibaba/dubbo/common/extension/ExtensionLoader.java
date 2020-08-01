@@ -42,19 +42,19 @@ import java.util.regex.Pattern;
  * <li>auto wrap extension in wrapper </li>
  * <li>default extension is an adaptive instance</li>
  * </ul>
- *
+ * <p>
  * 拓展加载器
- *
+ * <p>
  * Dubbo使用的扩展点获取。<p>
  * <ul>
  *      <li>自动注入关联扩展点。</li>
  *      <li>自动Wrap上扩展点的Wrap类。</li>
  *      <li>缺省获得的的扩展点是一个Adaptive Instance。</li>
  * </ul>
- *
+ * <p>
  * Dubbo SPI ：https://dubbo.gitbooks.io/dubbo-dev-book/SPI.html
  * Java  SPI ：http://blog.csdn.net/top_code/article/details/51934459
- *
+ * <p>
  * 另外，该类同时是 ExtensionLoader 的管理容器，例如 {@link #EXTENSION_INSTANCES} 、{@link #EXTENSION_INSTANCES} 属性。
  *
  * @see <a href="http://java.sun.com/j2se/1.5.0/docs/guide/jar/jar.html#Service%20Provider">Service Provider in Java 5</a>
@@ -83,19 +83,19 @@ public class ExtensionLoader<T> {
 
     /**
      * 拓展加载器集合
-     *
+     * <p>
      * key：拓展接口
      */
     // 不用重复加载。
     private static final ConcurrentMap<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS = new ConcurrentHashMap<Class<?>, ExtensionLoader<?>>();
     /**
      * 拓展实现类集合
-     *
+     * <p>
      * key：拓展实现类
      * value：拓展对象。
-     *
+     * <p>
      * 例如，key 为 Class<AccessLogFilter>
-     *      value 为 AccessLogFilter 对象
+     * value 为 AccessLogFilter 对象
      */
     private static final ConcurrentMap<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<Class<?>, Object>();
 
@@ -109,51 +109,51 @@ public class ExtensionLoader<T> {
     private final Class<?> type;
     /**
      * 对象工厂
-     *
+     * <p>
      * 用于调用 {@link #injectExtension(Object)} 方法，向拓展对象注入依赖的属性。
-     *
+     * <p>
      * 例如，StubProxyFactoryWrapper 中有 `Protocol protocol` 属性。
      */
     private final ExtensionFactory objectFactory;
     /**
      * 缓存的拓展名与拓展类的映射。
-     *
+     * <p>
      * 和 {@link #cachedClasses} 的 KV 对调。
-     *
+     * <p>
      * 通过 {@link #loadExtensionClasses} 加载
      */
     private final ConcurrentMap<Class<?>, String> cachedNames = new ConcurrentHashMap<Class<?>, String>();
     /**
      * 缓存的拓展实现类集合。
-     *
+     * <p>
      * 不包含如下两种类型：
-     *  1. 自适应拓展实现类。例如 AdaptiveExtensionFactory
-     *  2. 带唯一参数为拓展接口的构造方法的实现类，或者说拓展 Wrapper 实现类。例如，ProtocolFilterWrapper 。
-     *       拓展 Wrapper 实现类，会添加到 {@link #cachedWrapperClasses} 中
-     *
+     * 1. 自适应拓展实现类。例如 AdaptiveExtensionFactory
+     * 2. 带唯一参数为拓展接口的构造方法的实现类，或者说拓展 Wrapper 实现类。例如，ProtocolFilterWrapper 。
+     * 拓展 Wrapper 实现类，会添加到 {@link #cachedWrapperClasses} 中
+     * <p>
      * 通过 {@link #loadExtensionClasses} 加载
      */
     private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<Map<String, Class<?>>>();
 
     /**
      * 拓展名与 @Activate 的映射
-     *
+     * <p>
      * 例如，AccessLogFilter。
-     *
+     * <p>
      * 用于 {@link #getActivateExtension(URL, String)}
      */
     // 缓存激活的实现类
     private final Map<String, Activate> cachedActivates = new ConcurrentHashMap<String, Activate>();
     /**
      * 缓存的拓展对象集合
-     *
+     * <p>
      * key：拓展名
      * value：拓展对象
-     *
+     * <p>
      * 例如，Protocol 拓展
-     *          key：dubbo value：DubboProtocol
-     *          key：injvm value：InjvmProtocol
-     *
+     * key：dubbo value：DubboProtocol
+     * key：injvm value：InjvmProtocol
+     * <p>
      * 通过 {@link #loadExtensionClasses} 加载
      */
     private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<String, Holder<Object>>();
@@ -163,28 +163,28 @@ public class ExtensionLoader<T> {
     private final Holder<Object> cachedAdaptiveInstance = new Holder<Object>();
     /**
      * 缓存的自适应拓展对象的类
-     *
+     * <p>
      * {@link #getAdaptiveExtensionClass()}
      */
     private volatile Class<?> cachedAdaptiveClass = null;
     /**
      * 缓存的默认拓展名
-     *
+     * <p>
      * 通过 {@link SPI} 注解获得
      */
     private String cachedDefaultName;
     /**
      * 创建 {@link #cachedAdaptiveInstance} 时发生的异常。
-     *
+     * <p>
      * 发生异常后，不再创建，参见 {@link #createAdaptiveExtension()}
      */
     private volatile Throwable createAdaptiveInstanceError;
 
     /**
      * 拓展 Wrapper 实现类集合
-     *
+     * <p>
      * 带唯一参数为拓展接口的构造方法的实现类
-     *
+     * <p>
      * 通过 {@link #loadExtensionClasses} 加载
      */
     // 包装类缓存类型集合
@@ -192,10 +192,10 @@ public class ExtensionLoader<T> {
 
     /**
      * 拓展名 与 加载对应拓展类发生的异常 的 映射
-     *
+     * <p>
      * key：拓展名
      * value：异常
-     *
+     * <p>
      * 在 {@link #loadFile(Map, String)} 时，记录
      */
     private Map<String, IllegalStateException> exceptions = new ConcurrentHashMap<String, IllegalStateException>();
@@ -210,7 +210,7 @@ public class ExtensionLoader<T> {
      * 是否包含 @SPI 注解
      *
      * @param type 类
-     * @param <T> 泛型
+     * @param <T>  泛型
      * @return 是否包含
      */
     private static <T> boolean withExtensionAnnotation(Class<T> type) {
@@ -221,7 +221,7 @@ public class ExtensionLoader<T> {
      * 根据拓展点的接口，获得拓展加载器
      *
      * @param type 接口
-     * @param <T> 泛型
+     * @param <T>  泛型
      * @return 加载器
      */
     @SuppressWarnings("unchecked")
@@ -286,7 +286,7 @@ public class ExtensionLoader<T> {
 
     /**
      * This is equivalent to {@code getActivateExtension(url, url.getParameter(key).split(","), null)}
-     *
+     * <p>
      * 获得符合自动激活条件的拓展对象数组
      *
      * @param url   url
@@ -306,7 +306,7 @@ public class ExtensionLoader<T> {
 
     /**
      * Get activate extensions.
-     *
+     * <p>
      * 获得符合自动激活条件的拓展对象数组
      *
      * @param url    url
@@ -368,7 +368,7 @@ public class ExtensionLoader<T> {
     /**
      * 匹配分组
      *
-     * @param group 过滤的分组条件。若为空，无需过滤
+     * @param group  过滤的分组条件。若为空，无需过滤
      * @param groups 配置的分组
      * @return 是否匹配
      */
@@ -392,7 +392,7 @@ public class ExtensionLoader<T> {
      * 是否激活，通过 Dubbo URL 中是否存在参数名为 `@Activate.value` ，并且参数值非空。
      *
      * @param activate 自动激活注解
-     * @param url Dubbo URL
+     * @param url      Dubbo URL
      * @return 是否
      */
     private boolean isActive(Activate activate, URL url) {
@@ -662,7 +662,7 @@ public class ExtensionLoader<T> {
                         }
                     }
                 }
-            // 若之前创建报错，则抛出异常 IllegalStateException
+                // 若之前创建报错，则抛出异常 IllegalStateException
             } else {
                 throw new IllegalStateException("fail to create adaptive instance: " + createAdaptiveInstanceError.toString(), createAdaptiveInstanceError);
             }
@@ -811,7 +811,7 @@ public class ExtensionLoader<T> {
 
     /**
      * 加载拓展实现类数组
-     *
+     * <p>
      * 无需声明 synchronized ，因为唯一调用该方法的 {@link #getExtensionClasses()} 已经声明。
      * // synchronized in getExtensionClasses
      *
@@ -847,12 +847,12 @@ public class ExtensionLoader<T> {
      * 从一个配置文件中，加载拓展实现类数组。
      *
      * @param extensionClasses 拓展类名数组
-     * @param dir 文件名
+     * @param dir              文件名
      */
     private void loadFile(Map<String, Class<?>> extensionClasses, String dir) {
         // 完整的文件名
         String fileName = dir + type.getName();
-        System.out.println(fileName);
+        System.out.println("开始加载：" + fileName);
         try {
             Enumeration<java.net.URL> urls;
             // 获得文件名对应的所有文件数组
@@ -928,7 +928,7 @@ public class ExtensionLoader<T> {
                                                         wrappers = cachedWrapperClasses;
                                                     }
                                                     wrappers.add(clazz);
-                                                // 缓存拓展实现类到 `extensionClasses`
+                                                    // 缓存拓展实现类到 `extensionClasses`
                                                 } catch (NoSuchMethodException e) {
                                                     // 获取默认构造器
                                                     clazz.getConstructor();
@@ -995,6 +995,8 @@ public class ExtensionLoader<T> {
             logger.error("Exception when load extension class(interface: " +
                     type + ", description file: " + fileName + ").", t);
         }
+        System.out.println("结束加载：" + fileName);
+
     }
 
     @SuppressWarnings("deprecation")
@@ -1095,7 +1097,7 @@ public class ExtensionLoader<T> {
                 code.append("throw new UnsupportedOperationException(\"method ")
                         .append(method.toString()).append(" of interface ")
                         .append(type.getName()).append(" is not adaptive method!\");");
-            // @Adaptive 注解，生成方法体的代码
+                // @Adaptive 注解，生成方法体的代码
             } else {
                 // 寻找 Dubbo URL 参数的位置
                 int urlTypeIndex = -1;
