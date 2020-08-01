@@ -65,6 +65,7 @@ public class ZkClientWrapper {
      */
     public void start() {
         if (!started) {
+            System.out.println("启动守护线程");
             Thread connectThread = new Thread(listenableFutureTask);
             connectThread.setName("DubboZkclientConnector");
             connectThread.setDaemon(true);
