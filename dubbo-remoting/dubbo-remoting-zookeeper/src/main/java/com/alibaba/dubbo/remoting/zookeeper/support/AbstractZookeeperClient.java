@@ -156,18 +156,25 @@ public abstract class AbstractZookeeperClient<TargetChildListener> implements Zo
         }
     }
 
+    // 关闭资源
     protected abstract void doClose();
 
+    // 创建永久节点
     protected abstract void createPersistent(String path);
 
+    // 创建临时节点
     protected abstract void createEphemeral(String path);
 
+    // 检查是否存在
     protected abstract boolean checkExists(String path);
 
+    // 获取类型
     protected abstract TargetChildListener createTargetChildListener(String path, ChildListener listener);
 
+    // 添加监听事件
     protected abstract List<String> addTargetChildListener(String path, TargetChildListener listener);
 
+    // 移除监听事件
     protected abstract void removeTargetChildListener(String path, TargetChildListener listener);
 
 }
