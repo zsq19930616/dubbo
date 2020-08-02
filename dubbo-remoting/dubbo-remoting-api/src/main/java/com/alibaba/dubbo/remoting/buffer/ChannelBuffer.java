@@ -207,6 +207,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> {
     /**
      * Returns the number of bytes (octets) this buffer can contain.
      */
+    // 返回容量
     int capacity();
 
     /**
@@ -218,6 +219,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> {
      * NIO buffer, which sets the {@code limit} to the {@code capacity} of the
      * buffer.
      */
+    // 清空缓冲区
     void clear();
 
     /**
@@ -227,6 +229,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> {
      * buf.readableBytes())}. This method does not modify {@code readerIndex} or
      * {@code writerIndex} of this buffer.
      */
+    // 复制新的缓冲区
     ChannelBuffer copy();
 
     /**
@@ -235,6 +238,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> {
      * method does not modify {@code readerIndex} or {@code writerIndex} of this
      * buffer.
      */
+    // 复制新的缓冲区，从指定索引位置，复制指定长度
     ChannelBuffer copy(int index, int length);
 
     /**
@@ -245,6 +249,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> {
      * <p/>
      * Please refer to the class documentation for more detailed explanation.
      */
+    // 丢弃读取的字节
     void discardReadBytes();
 
     /**
@@ -264,6 +269,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> {
      *                                   than the specified value and if this
      *                                   buffer is not a dynamic buffer
      */
+    // 确保缓冲区可写字节数
     void ensureWritableBytes(int writableBytes);
 
     /**
@@ -281,6 +287,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> {
      * Returns the factory which creates a {@link ChannelBuffer} whose type and
      * default {@link java.nio.ByteOrder} are same with this buffer.
      */
+    // 缓冲区工厂
     ChannelBufferFactory factory();
 
     /**
@@ -292,6 +299,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> {
      *                                   than {@code 0} or {@code index + 1} is
      *                                   greater than {@code this.capacity}
      */
+    // 获取指定位置的字节，索引超出抛出异常
     byte getByte(int index);
 
     /**
@@ -304,6 +312,7 @@ public interface ChannelBuffer extends Comparable<ChannelBuffer> {
      *                                   dst.length} is greater than {@code
      *                                   this.capacity}
      */
+    // 从开始位置到指定索引的数据写到指定的字节数组中
     void getBytes(int index, byte[] dst);
 
     /**
