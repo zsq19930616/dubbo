@@ -72,6 +72,26 @@ public class ByteBufferBackedChannelBuffer extends AbstractChannelBuffer {
         return capacity;
     }
 
+    public static void main(String[] args) {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(10);
+        byteBuffer.put((byte) 1);
+        byteBuffer.put((byte) 2);
+        byteBuffer.put((byte) 3);
+        System.out.println(byteBuffer);
+        ByteBuffer slice = byteBuffer.slice();
+        System.out.println(slice);
+        System.out.println(byteBuffer.remaining());
+        System.out.println(slice.remaining());
+        slice.put((byte) 2);
+        System.out.println(slice.remaining());
+
+        ByteBufferBackedChannelBuffer byteBufferBackedChannelBuffer = new ByteBufferBackedChannelBuffer(byteBuffer);
+        System.out.println(byteBufferBackedChannelBuffer);
+
+        ChannelBuffer copy = byteBufferBackedChannelBuffer.copy(0, 7);
+        System.out.println(copy);
+    }
+
     @Override
     public ChannelBuffer copy(int index, int length) {
         ByteBuffer src;
