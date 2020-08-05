@@ -45,6 +45,7 @@ public class DubboRegistryFactory extends AbstractRegistryFactory {
     private ProxyFactory proxyFactory;
     private Cluster cluster;
 
+    //  获取注册中心URL
     private static URL getRegistryURL(URL url) {
         return url.setPath(RegistryService.class.getName())
                 .removeParameter(Constants.EXPORT_KEY).removeParameter(Constants.REFER_KEY)
