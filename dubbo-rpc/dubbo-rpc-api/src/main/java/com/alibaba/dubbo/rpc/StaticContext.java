@@ -28,6 +28,13 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class StaticContext extends ConcurrentHashMap<Object, Object> {
 
+    public static void main(String[] args) {
+        StaticContext staticContext = new StaticContext("a");
+        staticContext.put("b","b");
+        System.out.println(staticContext.getName());
+        System.out.println(staticContext);
+    }
+
     private static final long serialVersionUID = 1L;
 
     private static final String SYSTEMNAME = "system";

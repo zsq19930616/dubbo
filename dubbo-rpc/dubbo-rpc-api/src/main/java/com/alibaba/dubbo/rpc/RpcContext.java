@@ -193,6 +193,20 @@ public class RpcContext {
         return (response != null && clazz.isAssignableFrom(response.getClass())) ? (T) response : null;
     }
 
+    public static void main(String[] args) {
+
+        class A{}
+        class B extends A{}
+
+        System.out.println(A.class.isAssignableFrom(A.class));
+        System.out.println(B.class.isAssignableFrom(A.class));
+        System.out.println(A.class.isAssignableFrom(B.class));
+
+        System.out.println(RpcContext.getContext().getRemoteHost());
+        System.out.println(NetUtils.getLocalAddress());
+
+    }
+
     public void setResponse(Object response) {
         this.response = response;
     }
@@ -203,11 +217,15 @@ public class RpcContext {
      * @return provider side.
      */
     public boolean isProviderSide() {
+        // 获取url
         URL url = getUrl();
+        // 为空，非服务提供者
         if (url == null) {
             return false;
         }
+        // 获取远程服务地址
         InetSocketAddress address = getRemoteAddress();
+        // 为空，非服务提供者
         if (address == null) {
             return false;
         }
@@ -217,6 +235,7 @@ public class RpcContext {
         } else {
             host = address.getAddress().getHostAddress();
         }
+        // 端口不一样或者IP不一样
         return url.getPort() != address.getPort() ||
                 !NetUtils.filterLocalHost(url.getIp()).equals(NetUtils.filterLocalHost(host));
     }
@@ -241,6 +260,7 @@ public class RpcContext {
         } else {
             host = address.getAddress().getHostAddress();
         }
+        // 端口一样，并且调用IP一样
         return url.getPort() == address.getPort() &&
                 NetUtils.filterLocalHost(url.getIp()).equals(NetUtils.filterLocalHost(host));
     }
@@ -643,8 +663,11 @@ public class RpcContext {
     public RpcContext setInvocation(Invocation invocation) {
         this.invocation = invocation;
         if (invocation != null) {
+            // 设置方法名
             setMethodName(invocation.getMethodName());
+            // 设置参数类型
             setParameterTypes(invocation.getParameterTypes());
+            // 设置参数值
             setArguments(invocation.getArguments());
         }
         return this;

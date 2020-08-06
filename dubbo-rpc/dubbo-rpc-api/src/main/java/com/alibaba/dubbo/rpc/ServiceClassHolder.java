@@ -18,10 +18,19 @@ package com.alibaba.dubbo.rpc;
 
 /**
  * TODO this is just a workaround for rest protocol, and now we just ensure it works in the most common dubbo usages
- *
+ * <p>
  * Service 实现类的 Holder
  */
 public class ServiceClassHolder {
+
+    public static void main(String[] args) {
+        ServiceClassHolder instance = ServiceClassHolder.getInstance();
+        instance.pushServiceClass(ServiceClassHolder.class);
+        Class aClass = instance.popServiceClass();
+        System.out.println(aClass);
+        aClass = instance.popServiceClass();
+        System.out.println(aClass);
+    }
 
     /**
      * 单例
@@ -30,7 +39,7 @@ public class ServiceClassHolder {
     /**
      * holder
      */
-    private final ThreadLocal<Class> holder  = new ThreadLocal<Class>();
+    private final ThreadLocal<Class> holder = new ThreadLocal<Class>();
 
     public static ServiceClassHolder getInstance() {
         return INSTANCE;
